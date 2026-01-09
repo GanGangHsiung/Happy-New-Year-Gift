@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 蛇年大吉 - 媽媽專屬紅包抽獎</title>
+    <style>
+        :root { --red: #d63031; --gold: #feca57; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #fce4ec; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; border: 3px solid var(--red); }
+        h2 { color: var(--red); }
+        .step { display: none; }
+        .step.active { display: block; }
+        input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { background-color: var(--red); color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: 0.3s; width: 100%; margin-top: 10px; }
+        button:hover { background-color: #b32626; transform: scale(1.05); }
+        .prize-box { font-size: 2rem; font-weight: bold; color: var(--red); margin: 20px 0; min-height: 3rem; }
+        .history { font-size: 0.9rem; color: #666; margin-top: 10px; }
+        .celebration { font-size: 1.5rem; color: #d35400; font-weight: bold; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="step1" class="step active">
+        <h2>🧧 身分驗證</h2>
+        <p>請輸入您的身分確認：</p>
+        <input type="text" id="nameInput" placeholder="您是誰的媽媽？">
+        <button onclick="checkStep1()">下一步</button>
+    </div>
+
+    <div id="step2" class="step">
+        <h2>📊 年度滿意度</h2>
+        <p>2024 年度對熊剛的表現：</p>
+        <select id="satisfaction">
+            <option value="">-- 請選擇 --</option>
+            <option value="100">非常滿意 (紅包加碼預感)</option>
+            <option value="80">滿意 (繼續加油)</option>
+            <option value="50">還有進步空間</option>
+        </select>
+        <button onclick="checkStep2()">下一步</button>
+    </div>
+
+    <div id="step3" class="step">
+        <h2>💡 溫馨提醒</h2>
+        <p style="text-align: left; line-height: 1.6;">
+            台北工作很辛苦，上班很忙沒時間看盤，今年預算可能沒去年豐盛，請問您是否清楚知曉？
+        </p>
+        <button onclick="checkStep3()">清楚知曉，兒子辛苦了</button>
+    </div>
+
+    <div id="step4" class="step">
+        <h2>🎉 抽紅包時間</h2>
+        <p>您有 3 次機會，將取最高金額！</p>
+        <div class="prize-box" id="currentPrize">？</div>
+        <div id="historyList" class="history">目前紀錄：尚未開始</div>
+        <button id="drawBtn" onclick="draw()">點我抽獎 (剩餘 <span id="remainCount">3</span> 次)</button>
+    </div>
+
+    <div id="step5" class="step">
+        <h2 class="celebration">🎊 恭喜獲獎！ 🎊</h2>
+        <p>最終最高紅包金額為：</p>
+        <div class="prize-box" id="finalPrize" style="font-size: 3rem;"></div>
+        <p style="color: #666;">請截圖此畫面傳給熊剛申請紅包！</p>
+        <p>祝媽媽新年快樂，身體健康！</p>
+    </div>
+</div>
+
+<script>
+    let scores = [];
+    let count = 3;
+
+    function nextStep(current, next) {
+        document.getElementById('step' + current).classList.remove('active');
+        document.getElementById('step' + next).classList.add('active');
+    }
+
+    function checkStep1() {
+        const val = document.getElementById('nameInput').value;
+        if (val.includes("熊剛")) {
+            nextStep(1, 2);
+        } else {
+            alert("驗證失敗，請輸入正確身分！");
+        }
+    }
+
+    function checkStep2() {
+        if (document.getElementById('satisfaction').value !== "") {
+            nextStep(2, 3);
+        } else {
+            alert("請選擇滿意度！");
+        }
+    }
+
+    function checkStep3() {
+        nextStep(3, 4);
+    }
+
+    function draw() {
+        if (count > 0) {
+            // 設定金額區間 (可自行調整，例如 3600 到 8800)
+            const min = 3600;
+            const max = 8800;
+            const amount = Math.floor(Math.random() * (max - min + 1) + min);
+            
+            scores.push(amount);
+            count--;
+            
+            document.getElementById('currentPrize').innerText = "$" + amount;
+            document.getElementById('remainCount').innerText = count;
+            document.getElementById('historyList').innerText = "抽獎紀錄：" + scores.join(", ");
+
+            if (count === 0) {
+                document.getElementById('drawBtn').innerText = "查看最終結果";
+                document.getElementById('drawBtn').onclick = showFinal;
+            }
+        }
+    }
+
+    function showFinal() {
+        const maxPrize = Math.max(...scores);
+        document.getElementById('finalPrize').innerText = "$" + maxPrize;
+        nextStep(4, 5);
+    }
+</script>
+
+</body>
+</html>
