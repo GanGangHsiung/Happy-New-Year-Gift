@@ -174,7 +174,12 @@
         <div class="celebration-title">🎉 恭喜媽媽 🎉</div>
         <p>最終獲得紅包金額：</p>
         <div class="final-amount" id="finalPrize"></div>
-        <p style="color: #d35400; font-weight: bold;">[ 請截圖此畫面傳給熊剛 ]</p>
+        
+        <p id="bonusNote" style="color: #d63031; font-weight: bold; display: none;">
+            ✨ 偵測到數字 4，已自動加碼升級為 6！ ✨
+        </p>
+
+        <p style="color: #666; font-weight: bold;">[ 請截圖此畫面傳給熊剛 ]</p>
         <p style="font-size: 0.9rem;">祝您蛇年行大運，身體健康，<br>萬事如意，天天開心！ ❤️</p>
     </div>
 </div>
@@ -259,11 +264,23 @@
     }
 
     function showFinal() {
-        const maxPrize = Math.max(...scores);
+        let maxPrize = Math.max(...scores);
+        let originalMax = maxPrize.toString();
+        
+        // 檢查是否含有數字 '4'
+        if (originalMax.includes('4')) {
+            // 將所有的 '4' 替換成 '6'
+            let newMax = originalMax.replace(/4/g, '6');
+            maxPrize = parseInt(newMax);
+            
+            // 顯示加碼提示語
+            document.getElementById('bonusNote').style.display = 'block';
+        }
+
         document.getElementById('finalPrize').innerText = "$" + maxPrize;
         nextStep(4, 5);
         
-        // 終極大噴發動畫
+        // 終極大噴發動畫 (Confetti)
         var duration = 3 * 1000;
         var end = Date.now() + duration;
 
