@@ -301,13 +301,52 @@
     }
 
     function launchEpicPinkGoldConfetti() {
-        const end = Date.now() + (5 * 1000);
-        (function frame() {
-            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: pinkGoldColors });
-            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: pinkGoldColors });
-            if (Date.now() < end) requestAnimationFrame(frame);
-        }());
-    }
+    // 1. 瞬間全螢幕大爆發 (開場白)
+    confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: pinkGoldColors
+    });
+
+    // 2. 無限循環噴發
+    // 使用 setInterval 每 300 毫秒噴發一次
+    const infiniteConfetti = setInterval(function() {
+        // 如果媽媽已經點擊按鈕或離開頁面，可以在這裡視情況停止，
+        // 但若要「永不停止」，就讓它一直跑。
+        
+        // 隨機噴發位置與量
+        confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.8 }, // 左側
+            colors: pinkGoldColors
+        });
+        confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.8 }, // 右側
+            colors: pinkGoldColors
+        });
+        
+        // 偶爾隨機在中間噴一下
+        if (Math.random() > 0.7) {
+            confetti({
+                particleCount: 10,
+                spread: 80,
+                origin: { x: Math.random(), y: Math.random() - 0.2 },
+                colors: pinkGoldColors
+            });
+        }
+    }, 300); 
+
+    // 為了保險起見，如果媽媽點擊了 Line 按鈕，可以選擇停止噴發（可選）
+    document.getElementById('lineBtn').addEventListener('click', () => {
+        clearInterval(infiniteConfetti);
+    });
+}
 
     function sendToLine() {
         const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
