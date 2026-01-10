@@ -166,7 +166,7 @@
     <div id="step1" class="step active">
         <h2 style="letter-spacing: 2px;">🐍 2026 靈蛇獻瑞</h2>
         <p>紅包領取系統身分識別：</p>
-        <input type="text" id="nameInput" placeholder="請輸入您是誰的媽媽？">
+        <input type="text" id="nameInput" placeholder="請輸入誰是世界上最帥的兒子？">
         <button onclick="checkStep1()">開啟福氣門</button>
     </div>
 
@@ -186,8 +186,8 @@
         <h2>💖 熊剛的悄悄話</h2>
         <div style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary-red);">
             <p style="margin: 0; font-size: 0.95rem;">
-                親愛的媽媽，台北的生活節奏雖然快，但想到您的支持，我就有動力繼續打拼💪。<br><br>
-                今年的紅包不只是金額，更代表我滿滿的感謝。<b>不論抽到多少，這份孝心都是加倍的！</b>
+                親愛的媽媽，台北生活壓力大，上班忙到沒空看股市盤面📈。<br><br>
+                今年的紅包不只是金額，更代表我滿滿的感謝。<b>不論抽到多少，這份孝心都是不打折的！</b>
             </p>
         </div>
         <button onclick="checkStep3()">辛苦了，乖兒子</button>
@@ -195,7 +195,7 @@
 
     <div id="step4" class="step">
         <h2>🎰 財神來敲門</h2>
-        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並額外加碼！</b></p>
+        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值！</b></p>
         <div class="slot-machine">
             <div id="currentPrize">$0</div>
             <div class="history-pills" id="historyPills"></div>
@@ -347,6 +347,20 @@
         requestAnimationFrame(animateNumber);
     }
 
+    function sendToLine() {
+        // 設定您的 Line ID 或是連結
+        const lineID = "0912862113"; 
+        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n快點發給我～愛你喔！❤️`);
+        
+        // 優先嘗試開啟聊天室帶入文字 (適用於手機)
+        window.location.href = `https://line.me/R/oaMessage/${lineID}/?${message}`;
+        
+        // 如果上面的連結無法直接開啟，可以備用一般的 Line 分享連結
+        setTimeout(() => {
+            window.location.href = `https://social-plugins.line.me/lineit/share?text=${message}`;
+        }, 500);
+    }
+    
     function launchEpicConfetti() {
         const end = Date.now() + (4 * 1000);
         const colors = ['#ffb703', '#e63946', '#ffffff', '#ffd700'];
