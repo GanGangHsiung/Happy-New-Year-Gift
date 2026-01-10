@@ -39,7 +39,7 @@
         .container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(15px);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 30px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             width: 90%;
@@ -59,22 +59,22 @@
             to { opacity: 1; transform: scale(1) translateY(0); } 
         }
 
-        h2 { color: var(--dark-red); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 900; }
-        p { color: #444; line-height: 1.8; font-size: 1.1rem; }
+        h2 { color: var(--dark-red); margin-bottom: 1rem; font-size: 1.8rem; font-weight: 900; }
+        p { color: #444; line-height: 1.6; font-size: 1rem; }
 
         input, select {
-            width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #eee; border-radius: 15px; font-size: 1rem; outline: none; box-sizing: border-box;
+            width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; font-size: 1rem; outline: none; box-sizing: border-box;
         }
 
         button {
             background: linear-gradient(to bottom, var(--primary-red), var(--dark-red));
-            color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: all 0.3s; width: 100%; margin-top: 15px;
+            color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: 0.3s; width: 100%; margin-top: 10px;
         }
 
         .line-btn {
             background: linear-gradient(135deg, #00B900 0%, #009900 100%);
             display: none;
-            margin-top: 25px;
+            margin-top: 20px;
             animation: pulse-line 2s infinite;
         }
 
@@ -86,18 +86,23 @@
 
         .slot-machine {
             background: linear-gradient(145deg, #fff0f5, #fff9f0);
-            border-radius: 20px; padding: 30px 20px; margin: 25px 0; border: 3px double var(--gold);
+            border-radius: 20px; padding: 20px 10px; margin: 15px 0; border: 3px double var(--gold);
         }
 
-        #currentPrize {
-            font-size: 4rem; font-weight: 900; color: var(--primary-red); margin: 10px 0; text-shadow: 3px 3px 0px var(--gold);
+        .slot-reel {
+            width: 45px; height: 65px; background: white; border: 2px solid var(--gold); border-radius: 8px;
+            font-size: 2.5rem; font-weight: 900; color: var(--primary-red);
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.1); text-shadow: 2px 2px 0px var(--shiny-gold); overflow: hidden;
         }
+
+        .spinning { filter: blur(2px); transform: scale(0.95); transition: 0.1s; }
 
         .history-pills { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;}
-        .pill { background: white; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--dark-red); border: 1px solid var(--gold); font-weight: bold; }
+        .pill { background: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--dark-red); border: 1px solid var(--gold); font-weight: bold; }
 
         .final-amount {
-            font-size: 5rem; color: var(--primary-red); margin: 15px 0; font-weight: 900; text-shadow: 4px 4px 0px var(--gold);
+            font-size: 4rem; color: var(--primary-red); margin: 10px 0; font-weight: 900; text-shadow: 4px 4px 0px var(--gold);
         }
 
         .bonus-tag {
@@ -109,36 +114,9 @@
             80% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(1); }
         }
-
-        .pop-animation {
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
+        .pop-animation { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-    .slot-reel {
-    width: 50px;
-    height: 70px;
-    background: white;
-    border: 2px solid var(--gold);
-    border-radius: 10px;
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--primary-red);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-    text-shadow: 2px 2px 0px var(--shiny-gold);
-    overflow: hidden;
-}
-
-/* 旋轉時的動態模糊類別 */
-.spinning {
-    filter: blur(2px);
-    transform: scale(0.95);
-    transition: 0.1s;
-}
-       </style>
+    </style>
 </head>
 <body>
 
@@ -165,7 +143,7 @@
     <div id="step3" class="step">
         <h2>💖 熊剛的悄悄話</h2>
         <div style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary-red);">
-            <p style="margin: 0; font-size: 0.95rem;">
+            <p style="margin: 0; font-size: 0.9rem;">
                 親愛的媽媽，台北生活壓力大，上班忙到沒空看股市盤面📈。<br><br>
                 今年的紅包不只是金額，更代表我滿滿的感謝。<b>不論抽到多少，這份孝心都是不打折的！</b>
             </p>
@@ -174,28 +152,27 @@
     </div>
 
     <div id="step4" class="step">
-    <h2>🎰 財神來敲門</h2>
-    <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並有機會獲得隨機加碼！</b></p>
-    
-    <div class="slot-machine">
-        <div id="slotContainer" style="display: flex; justify-content: center; gap: 5px; margin-bottom: 15px;">
-            <div class="slot-reel" id="reel0">$</div>
-            <div class="slot-reel" id="reel1">0</div>
-            <div class="slot-reel" id="reel2">0</div>
-            <div class="slot-reel" id="reel3">0</div>
-            <div class="slot-reel" id="reel4">0</div>
+        <h2>🎰 財神來敲門</h2>
+        <p>系統將連續抽籤三次取最高值<br><b style="color:var(--dark-red)">並隨機獲得兒子加碼！</b></p>
+        <div class="slot-machine">
+            <div id="slotContainer" style="display: flex; justify-content: center; gap: 4px; margin-bottom: 15px;">
+                <div class="slot-reel" id="reel0">$</div>
+                <div class="slot-reel" id="reel1">0</div>
+                <div class="slot-reel" id="reel2">0</div>
+                <div class="slot-reel" id="reel3">0</div>
+                <div class="slot-reel" id="reel4">0</div>
+                <div class="slot-reel" id="reel5">0</div>
+            </div>
+            <div class="history-pills" id="historyPills"></div>
         </div>
-        <div class="history-pills" id="historyPills"></div>
-    </div>
-    
-    <button id="drawBtn" onclick="draw()">點我抽紅包 (剩 3 次)</button>
+        <button id="drawBtn" onclick="draw()">點我抽紅包 (剩 3 次)</button>
     </div>
 
     <div id="step5" class="step">
-        <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-        <p style="margin-top: 10px;">您獲得的 2026 蛇年紅包總額：</p>
+        <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
+        <p style="margin-top: 10px;">您的 2026 蛇年紅包總額：</p>
         
-        <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">
+        <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">
             兒子驚喜加碼：+$<span id="bonusValue">0</span>
         </div>
 
@@ -209,7 +186,7 @@
         </div>
 
         <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
-        <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
+        <p style="color: #666; font-size: 0.85rem; font-weight: bold; margin-top: 15px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
     </div>
 </div>
 
@@ -250,83 +227,61 @@
     }
 
     function draw() {
-    const btn = document.getElementById('drawBtn');
-    btn.disabled = true;
-    
-    const min = 10800;
-    const max = 36800;
-    
-    // 1. 決定最終金額 (並避開 4)
-    let finalAmount = Math.floor(Math.random() * (max - min + 1) + min);
-    finalAmount = avoidFour(finalAmount); 
-    const finalStr = finalAmount.toString().padStart(5, '0'); // 補齊 5 位數，例如 "12800"
+        const btn = document.getElementById('drawBtn');
+        btn.disabled = true;
+        const min = 10800;
+        const max = 36800;
+        
+        let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
+        const finalStr = finalAmount.toString().padStart(5, '0');
 
-    const reels = [
-        document.getElementById('reel1'),
-        document.getElementById('reel2'),
-        document.getElementById('reel3'),
-        document.getElementById('reel4')
-    ];
+        const reels = [
+            document.getElementById('reel1'),
+            document.getElementById('reel2'),
+            document.getElementById('reel3'),
+            document.getElementById('reel4'),
+            document.getElementById('reel5')
+        ];
 
-    // 2. 開始旋轉動畫
-    let spinIntervals = [];
-    
-    // 讓 $ 符號晃動一下
-    document.getElementById('reel0').classList.add('spinning');
+        document.getElementById('reel0').classList.add('spinning');
+        let spinIntervals = reels.map((reel, i) => {
+            reel.classList.add('spinning');
+            return setInterval(() => {
+                reel.innerText = Math.floor(Math.random() * 10);
+            }, 50 + (i * 20));
+        });
 
-    reels.forEach((reel, index) => {
-        reel.classList.add('spinning');
-        // 每個滾輪跳動數字
-        const interval = setInterval(() => {
-            reel.innerText = Math.floor(Math.random() * 10);
-        }, 50 + (index * 20)); // 每個滾輪速度略有不同
-        spinIntervals.push(interval);
-    });
-
-    // 3. 依序停止滾輪
-    reels.forEach((reel, index) => {
-        setTimeout(() => {
-            clearInterval(spinIntervals[index]);
-            reel.classList.remove('spinning');
-            reel.innerText = finalStr[index + 1]; // 填入最終金額的數字 (跳過第一位，因為第一位是 $ 符號後的數字)
-            
-            // 處理第一位數字 (萬位)
-            if (index === 0) {
-                // 如果是第一個滾輪停止，萬位數字設定好
-                document.getElementById('reel1').innerText = finalStr[0];
-            }
-            
-            // 每次停止發出一個小震動或音效感 (可選)
-            if (index === reels.length - 1) {
-                // 全部停止後的收尾
-                document.getElementById('reel0').classList.remove('spinning');
-                finishDraw(finalAmount);
-            }
-        }, 1000 + (index * 400)); // 每隔 0.4 秒停一個
-    });
-}
-
-function finishDraw(finalAmount) {
-    const btn = document.getElementById('drawBtn');
-    scores.push(finalAmount);
-    count--;
-    updatePills();
-    
-    confetti({ particleCount: 80, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
-
-    if (count > 0) {
-        btn.innerText = `再抽一次 (剩 ${count} 次)`;
-        btn.disabled = false;
-    } else {
-        btn.innerText = "查看最終加碼成果";
-        btn.disabled = false;
-        btn.onclick = showFinal;
+        reels.forEach((reel, i) => {
+            setTimeout(() => {
+                clearInterval(spinIntervals[i]);
+                reel.classList.remove('spinning');
+                reel.innerText = finalStr[i];
+                if (i === reels.length - 1) {
+                    document.getElementById('reel0').classList.remove('spinning');
+                    finishDraw(finalAmount);
+                }
+            }, 1000 + (i * 400));
+        });
     }
-}
+
+    function finishDraw(finalAmount) {
+        scores.push(finalAmount);
+        count--;
+        updatePills();
+        confetti({ particleCount: 80, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
+        const btn = document.getElementById('drawBtn');
+        if (count > 0) {
+            btn.innerText = `再抽一次 (剩 ${count} 次)`;
+            btn.disabled = false;
+        } else {
+            btn.innerText = "查看最終加碼成果";
+            btn.disabled = false;
+            btn.onclick = showFinal;
+        }
+    }
 
     function updatePills() {
-        const container = document.getElementById('historyPills');
-        container.innerHTML = scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
+        document.getElementById('historyPills').innerHTML = scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
     }
 
     function showFinal() {
@@ -340,8 +295,7 @@ function finishDraw(finalAmount) {
         }
 
         nextStep(4, 5); 
-
-        let speed = 3000; 
+        let speed = 2500; 
         let startTime = performance.now();
         
         function animateToBase(now) {
@@ -374,70 +328,25 @@ function finishDraw(finalAmount) {
         }
         requestAnimationFrame(animateToBase);
     }
-function launchEpicPinkGoldConfetti() {
-    // 1. 瞬間全螢幕大爆發 (給媽媽的第一眼衝擊)
-    confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: pinkGoldColors
-    });
 
-    // 2. 設定無限循環噴發
-    // 將 interval 存入全域或當前作用域，確保下方 lineBtn 能清除它
-    const infiniteConfetti = setInterval(function() {
-        // 左側噴發
-        confetti({
-            particleCount: 5,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0, y: 0.8 },
-            colors: pinkGoldColors
-        });
-        
-        // 右側噴發
-        confetti({
-            particleCount: 5,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1, y: 0.8 },
-            colors: pinkGoldColors
-        });
-        
-        // 隨機中間噴發 (增加瘋狂感)
-        if (Math.random() > 0.7) {
-            confetti({
-                particleCount: 15,
-                spread: 80,
-                origin: { x: Math.random(), y: Math.random() - 0.2 },
-                colors: pinkGoldColors
-            });
-        }
-    }, 300); // 每 0.3 秒噴一次，頻率很高，畫面會非常熱鬧
-
-    // 3. 綁定按鈕點擊事件：當媽媽點擊領取時，停止噴發以免干擾 Line 的跳轉
-    const lineBtn = document.getElementById('lineBtn');
-    if (lineBtn) {
-        lineBtn.addEventListener('click', () => {
-            clearInterval(infiniteConfetti);
-        });
+    function launchEpicPinkGoldConfetti() {
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: pinkGoldColors });
+        const infiniteConfetti = setInterval(() => {
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: pinkGoldColors });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: pinkGoldColors });
+            if (Math.random() > 0.7) {
+                confetti({ particleCount: 15, spread: 80, origin: { x: Math.random(), y: Math.random() - 0.2 }, colors: pinkGoldColors });
+            }
+        }, 300);
+        document.getElementById('lineBtn').addEventListener('click', () => clearInterval(infiniteConfetti));
     }
-}
 
     function sendToLine() {
         const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
         const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
-        const lineShareUrl = `https://line.it/R/msg/text/?${message}`;
-        
-        window.location.href = lineShareUrl;
-
-        setTimeout(() => {
-            if (!document.hidden) {
-                window.location.href = lineFriendLink;
-            }
-        }, 1000);
+        window.location.href = `https://line.it/R/msg/text/?${message}`;
+        setTimeout(() => { if (!document.hidden) window.location.href = lineFriendLink; }, 1000);
     }
 </script>
-
 </body>
 </html>
