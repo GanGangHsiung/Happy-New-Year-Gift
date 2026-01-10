@@ -10,6 +10,7 @@
         :root {
             --primary-red: #e63946;
             --gold: #ffb703;
+            --pink: #ff69b4;
             --dark-red: #9b2226;
             --shiny-gold: #fff3b0;
             --bg-gradient: linear-gradient(135deg, #8b0000 0%, #e63946 50%, #d00000 100%);
@@ -24,16 +25,14 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            /* 新增金色星塵背景 */
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.1) 0%, transparent 20%);
+                radial-gradient(circle at 20% 30%, rgba(255, 105, 180, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.15) 0%, transparent 20%);
         }
 
-        /* 華麗流光動畫 */
         @keyframes shine {
             0% { border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
-            50% { border-color: #fff; box-shadow: 0 0 30px var(--gold); }
+            50% { border-color: var(--pink); box-shadow: 0 0 30px var(--pink); }
             100% { border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
         }
 
@@ -49,6 +48,7 @@
             border: 5px solid var(--gold);
             position: relative;
             animation: shine 3s infinite ease-in-out;
+            z-index: 10;
         }
 
         .step { display: none; animation: fadeIn 0.6s cubic-bezier(0.39, 0.575, 0.565, 1); }
@@ -63,101 +63,48 @@
         p { color: #444; line-height: 1.8; font-size: 1.1rem; }
 
         input, select {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: 2px solid #eee;
-            border-radius: 15px;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-            box-sizing: border-box;
+            width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #eee; border-radius: 15px; font-size: 1rem; outline: none; box-sizing: border-box;
         }
-        input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 183, 3, 0.3); }
 
         button {
             background: linear-gradient(to bottom, var(--primary-red), var(--dark-red));
-            color: white;
-            border: none;
-            padding: 16px 28px;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 100%;
-            margin-top: 15px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: all 0.3s; width: 100%; margin-top: 15px;
         }
-        button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(155, 34, 38, 0.5); }
-        button:active { transform: translateY(1px); }
-        button:disabled { background: #bbb; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .line-btn {
+            background: linear-gradient(135deg, #00B900 0%, #009900 100%);
+            display: none;
+            margin-top: 25px;
+            animation: pulse-line 2s infinite;
+        }
+
+        @keyframes pulse-line {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 185, 0, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 185, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 185, 0, 0); }
+        }
 
         .slot-machine {
-            background: linear-gradient(145deg, #fff3f3, #ffebeb);
-            border-radius: 20px;
-            padding: 30px 20px;
-            margin: 25px 0;
-            border: 3px double var(--gold);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(145deg, #fff0f5, #fff9f0);
+            border-radius: 20px; padding: 30px 20px; margin: 25px 0; border: 3px double var(--gold);
         }
 
         #currentPrize {
-            font-size: 4rem;
-            font-weight: 900;
-            color: var(--primary-red);
-            margin: 10px 0;
-            text-shadow: 3px 3px 0px var(--gold), 5px 5px 15px rgba(0,0,0,0.1);
-            font-family: 'Arial Black', sans-serif;
+            font-size: 4rem; font-weight: 900; color: var(--primary-red); margin: 10px 0; text-shadow: 3px 3px 0px var(--gold);
         }
 
-        .history-pills { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .pill {
-            background: white;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: var(--dark-red);
-            border: 1px solid var(--gold);
-            font-weight: bold;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-        }
+        .history-pills { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;}
+        .pill { background: white; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--dark-red); border: 1px solid var(--gold); font-weight: bold; }
 
         .final-amount {
-            font-size: 5rem;
-            color: var(--primary-red);
-            margin: 15px 0;
-            font-weight: 900;
-            text-shadow: 4px 4px 0px var(--gold);
-            animation: bounceIn 1s both;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.1); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
+            font-size: 5rem; color: var(--primary-red); margin: 15px 0; font-weight: 900; text-shadow: 4px 4px 0px var(--gold);
         }
 
         .bonus-tag {
-            display: inline-block;
-            background: #ffd700;
-            color: #d00000;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            animation: pulse 1s infinite;
+            display: inline-block; background: var(--pink); color: white; padding: 4px 12px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-top: 5px; animation: pulse 1s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -195,7 +142,7 @@
 
     <div id="step4" class="step">
         <h2>🎰 財神來敲門</h2>
-        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值！</b></p>
+        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並額外加碼！</b></p>
         <div class="slot-machine">
             <div id="currentPrize">$0</div>
             <div class="history-pills" id="historyPills"></div>
@@ -205,15 +152,16 @@
 
     <div id="step5" class="step">
         <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-        <p style="margin-top: 10px;">您獲得的 2026 蛇年紅包總額：</p>
         <div class="final-amount" id="finalPrize">$0</div>
         
         <div id="bonusContainer">
             <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
-                ✨ 已偵測到數字 4，自動升級為 6！ ✨
+                ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
             </p>
-            <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
+            <div class="bonus-tag" id="extraBonusTag" style="display:none;">✨ 粉金加碼：私房錢隨機加碼送達 🚀</div>
         </div>
+
+        <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
 
         <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
         <p style="font-size: 0.9rem; color: #888;">祝您蛇年行大運，平安健康，<br>股票張張漲不停！ 📈❤️</p>
@@ -223,6 +171,8 @@
 <script>
     let scores = [];
     let count = 3;
+    let finalMaxAmount = 0;
+    const pinkGoldColors = ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'];
 
     function nextStep(current, next) {
         document.getElementById('step' + current).classList.remove('active');
@@ -230,55 +180,43 @@
     }
 
     function checkStep1() {
-        const val = document.getElementById('nameInput').value;
-        if (val.includes("熊剛")) {
-            nextStep(1, 2);
-        } else {
-            alert("驗證失敗，只有熊剛的親愛媽媽能進入唷！");
-        }
+        if (document.getElementById('nameInput').value.includes("熊剛")) nextStep(1, 2);
+        else alert("驗證失敗，只有熊剛的親愛媽媽能進入唷！");
     }
 
     function checkStep2() {
-        if (document.getElementById('satisfaction').value !== "") {
-            nextStep(2, 3);
-        } else {
-            alert("請給兒子一個肯定的分數嘛～");
-        }
+        if (document.getElementById('satisfaction').value !== "") nextStep(2, 3);
+        else alert("請給兒子一個肯定的分數嘛～");
     }
 
-    function checkStep3() {
-        nextStep(3, 4);
+    function checkStep3() { nextStep(3, 4); }
+
+    function speak(text) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'zh-TW';
+        msg.rate = 1.1;
+        window.speechSynthesis.speak(msg);
     }
 
-    // 避開數字 4 的邏輯函式
     function avoidFour(num) {
         let str = num.toString();
-        if (str.includes('4')) {
-            return parseInt(str.replace(/4/g, '6'));
-        }
+        if (str.includes('4')) return parseInt(str.replace(/4/g, '6'));
         return num;
     }
 
     function draw() {
         const btn = document.getElementById('drawBtn');
         btn.disabled = true;
-        
-        const min = 8800; // 稍微調高起跳金額
+        const min = 8800;
         const max = 16800;
         let counter = 0;
         
         const timer = setInterval(() => {
             const tempAmount = Math.floor(Math.random() * (max - min + 1) + min);
             document.getElementById('currentPrize').innerText = "$" + tempAmount.toLocaleString();
-            counter++;
-            
-            if (counter > 20) {
+            if (counter++ > 20) {
                 clearInterval(timer);
-                let finalAmount = Math.floor(Math.random() * (max - min + 1) + min);
-                
-                // 每次抽取也先初步避開 4 (讓畫面好看)
-                finalAmount = avoidFour(finalAmount);
-                
+                let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
                 document.getElementById('currentPrize').innerText = "$" + finalAmount.toLocaleString();
                 scores.push(finalAmount);
                 count--;
@@ -292,13 +230,7 @@
                     btn.disabled = false;
                     btn.onclick = showFinal;
                 }
-                
-                confetti({
-                    particleCount: 80,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#e63946', '#ffb703', '#ffffff']
-                });
+                confetti({ particleCount: 60, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
             }
         }, 40);
     }
@@ -310,81 +242,49 @@
 
     function showFinal() {
         let maxPrize = Math.max(...scores);
-        
         // 1. 隨機加碼 300 - 500
-        const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300);
-        maxPrize += extraGift;
+        maxPrize += Math.floor(Math.random() * (500 - 300 + 1) + 300);
 
-        // 2. 確保避開數字 4 (再次檢查加碼後的數字)
-        let originalText = maxPrize.toString();
-        if (originalText.includes('4')) {
-            maxPrize = parseInt(originalText.replace(/4/g, '8')); // 碰到4變8，更吉利
+        // 2. 避開數字 4 變更為 8
+        if (maxPrize.toString().includes('4')) {
+            maxPrize = parseInt(maxPrize.toString().replace(/4/g, '8'));
             document.getElementById('bonusNote').style.display = 'block';
         }
+        finalMaxAmount = maxPrize;
 
         nextStep(4, 5);
         document.getElementById('extraBonusTag').style.display = 'inline-block';
 
-        // 數字滾動動畫
-        let startDisplay = 0;
-        const duration = 1500;
-        const startTime = performance.now();
-
+        let speed = 1500;
+        let startTime = performance.now();
         function animateNumber(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const currentNum = Math.floor(progress * maxPrize);
-            
-            document.getElementById('finalPrize').innerText = "$" + currentNum.toLocaleString();
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateNumber);
-            } else {
-                document.getElementById('finalPrize').innerText = "$" + maxPrize.toLocaleString();
-                launchEpicConfetti();
+            const progress = Math.min((now - startTime) / speed, 1);
+            document.getElementById('finalPrize').innerText = "$" + Math.floor(progress * finalMaxAmount).toLocaleString();
+            if (progress < 1) requestAnimationFrame(animateNumber);
+            else {
+                document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
+                document.getElementById('lineBtn').style.display = 'block';
+                speak("發財了！發財了！恭喜媽媽發大財！");
+                launchEpicPinkGoldConfetti();
             }
         }
         requestAnimationFrame(animateNumber);
     }
 
-    function sendToLine() {
-        // 設定您的 Line ID 或是連結
-        const lineID = "0912862113"; 
-        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n快點發給我～愛你喔！❤️`);
-        
-        // 優先嘗試開啟聊天室帶入文字 (適用於手機)
-        window.location.href = `https://line.me/R/oaMessage/${lineID}/?${message}`;
-        
-        // 如果上面的連結無法直接開啟，可以備用一般的 Line 分享連結
-        setTimeout(() => {
-            window.location.href = `https://social-plugins.line.me/lineit/share?text=${message}`;
-        }, 500);
-    }
-    
-    function launchEpicConfetti() {
-        const end = Date.now() + (4 * 1000);
-        const colors = ['#ffb703', '#e63946', '#ffffff', '#ffd700'];
-
+    function launchEpicPinkGoldConfetti() {
+        const end = Date.now() + (5 * 1000);
         (function frame() {
-            confetti({
-                particleCount: 4,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: colors
-            });
-            confetti({
-                particleCount: 4,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: colors
-            });
-
-            if (Date.now() < end) {
-                requestAnimationFrame(frame);
-            }
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: pinkGoldColors });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: pinkGoldColors });
+            if (Date.now() < end) requestAnimationFrame(frame);
         }());
+    }
+
+    function sendToLine() {
+        const lineID = "0912862113"; 
+        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
+        window.location.href = `https://line.me/R/oaMessage/${lineID}/?${message}`;
+        setTimeout(() => { window.location.href = `https://social-plugins.line.me/lineit/share?text=${message}`; }, 500);
     }
 </script>
 
