@@ -298,11 +298,26 @@
     }
 
     function sendToLine() {
-        const lineID = "0912862113"; 
-        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
-        window.location.href = `https://line.me/R/oaMessage/${lineID}/?${message}`;
-        setTimeout(() => { window.location.href = `https://social-plugins.line.me/lineit/share?text=${message}`; }, 500);
-    }
+    // 1. 請將下方連結換成您個人的 Line 好友連結
+    // 取得方式：Line 主頁 > 加好友 > 行動條碼 > 我的行動條碼 > 複製連結
+    const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
+    
+    // 2. 準備要傳送的訊息文字
+    const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
+    
+    // 3. 使用 Line 分享協議（這是最能確保訊息被帶入的方式）
+    const lineShareUrl = `https://line.it/R/msg/text/?${message}`;
+    
+    // 嘗試開啟 Line 並帶入訊息
+    window.location.href = lineShareUrl;
+
+    // 備用方案：如果 1 秒後沒反應，導向您的好友連結（讓媽媽可以直接加好友或發訊息）
+    setTimeout(() => {
+        if (!document.hidden) {
+            window.location.href = lineFriendLink;
+        }
+    }, 1000);
+}
 </script>
 
 </body>
