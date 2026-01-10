@@ -16,7 +16,10 @@
             --bg-gradient: linear-gradient(135deg, #8b0000 0%, #e63946 50%, #d00000 100%);
         }
 
-        body {
+        body 
+            <audio id="spinSound" src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3"></audio>
+            <audio id="stopSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+            <audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"></audio>{
             font-family: 'Noto Sans TC', sans-serif;
             background: var(--bg-gradient);
             height: 100vh;
@@ -227,59 +230,73 @@
     }
 
     function draw() {
-        const btn = document.getElementById('drawBtn');
-        btn.disabled = true;
-        const min = 10800;
-        const max = 36800;
-        
-        let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
-        const finalStr = finalAmount.toString().padStart(5, '0');
+    const btn = document.getElementById('drawBtn');
+    btn.disabled = true;
+    
+    // 播放拉霸旋轉音效
+    const spinSnd = document.getElementById('spinSound');
+    spinSnd.currentTime = 0;
+    spinSnd.play();
+    
+    const min = 10800;
+    const max = 36800;
+    let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
+    const finalStr = finalAmount.toString().padStart(5, '0');
 
-        const reels = [
-            document.getElementById('reel1'),
-            document.getElementById('reel2'),
-            document.getElementById('reel3'),
-            document.getElementById('reel4'),
-            document.getElementById('reel5')
-        ];
+    const reels = [1,2,3,4,5].map(i => document.getElementById('reel' + i));
 
-        document.getElementById('reel0').classList.add('spinning');
-        let spinIntervals = reels.map((reel, i) => {
-            reel.classList.add('spinning');
-            return setInterval(() => {
-                reel.innerText = Math.floor(Math.random() * 10);
-            }, 50 + (i * 20));
-        });
+    // 開始旋轉
+    document.getElementById('reel0').classList.add('spinning');
+    let intervals = reels.map((reel, i) => {
+        reel.classList.add('spinning');
+        return setInterval(() => {
+            reel.innerText = Math.floor(Math.random() * 10);
+        }, 50 + (i * 20));
+    });
 
-        reels.forEach((reel, i) => {
-            setTimeout(() => {
-                clearInterval(spinIntervals[i]);
-                reel.classList.remove('spinning');
-                reel.innerText = finalStr[i];
-                if (i === reels.length - 1) {
-                    document.getElementById('reel0').classList.remove('spinning');
-                    finishDraw(finalAmount);
-                }
-            }, 1000 + (i * 400));
-        });
-    }
+    // 依序停止
+    reels.forEach((reel, i) => {
+        setTimeout(() => {
+            clearInterval(intervals[i]);
+            reel.classList.remove('spinning');
+            reel.innerText = finalStr[i];
+            
+            // 每個滾輪停下時播放鈴聲
+            const stopSnd = document.getElementById('stopSound');
+            stopSnd.currentTime = 0;
+            stopSnd.play();
+
+            if (i === reels.length - 1) {
+                document.getElementById('reel0').classList.remove('spinning');
+                finishDraw(finalAmount);
+            }
+        }, 1000 + (i * 400));
+    });
+}
 
     function finishDraw(finalAmount) {
-        scores.push(finalAmount);
-        count--;
-        updatePills();
-        confetti({ particleCount: 80, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
-        const btn = document.getElementById('drawBtn');
-        if (count > 0) {
-            btn.innerText = `再抽一次 (剩 ${count} 次)`;
-            btn.disabled = false;
-        } else {
-            btn.innerText = "查看最終加碼成果";
-            btn.disabled = false;
-            btn.onclick = showFinal;
-        }
-    }
+    scores.push(finalAmount);
+    count--;
+    updatePills();
+    
+    // 每次抽獎結果出來即灑花一次
+    confetti({ 
+        particleCount: 100, 
+        spread: 70, 
+        origin: { y: 0.6 }, 
+        colors: pinkGoldColors 
+    });
 
+    const btn = document.getElementById('drawBtn');
+    if (count > 0) {
+        btn.innerText = `再抽一次 (剩 ${count} 次)`;
+        btn.disabled = false;
+    } else {
+        btn.innerText = "查看最終加碼成果";
+        btn.disabled = false;
+        btn.onclick = showFinal;
+    }
+}
     function updatePills() {
         document.getElementById('historyPills').innerHTML = scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
     }
