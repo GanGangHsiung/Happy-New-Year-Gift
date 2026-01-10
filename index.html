@@ -161,24 +161,25 @@
     </div>
 
     <div id="step5" class="step">
-    <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-    <p style="margin-top: 10px;">您獲得的 2026 蛇年紅包總額：</p>
-    
-    <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.6rem; font-weight: bold; margin-bottom: 10px; animation: bounceIn 0.8s both;">
-        兒子驚喜加碼：+$<span id="bonusValue">0</span>
-    </div>
+        <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
+        <p style="margin-top: 10px;">您獲得的 2026 蛇年紅包總額：</p>
+        
+        <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">
+            兒子驚喜加碼：+$<span id="bonusValue">0</span>
+        </div>
 
-    <div class="final-amount" id="finalPrize">$0</div>
-    
-    <div id="bonusContainer">
-        <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
-            ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
-        </p>
-        <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
-    </div>
+        <div class="final-amount" id="finalPrize">$0</div>
+        
+        <div id="bonusContainer">
+            <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
+                ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
+            </p>
+            <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
+        </div>
 
-    <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
-    <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
+        <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
+        <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
+    </div>
 </div>
 
 <script>
@@ -254,58 +255,50 @@
     }
 
     function showFinal() {
-    let basePrize = Math.max(...scores); // 這是加碼前的最高分
-    const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300); // 加碼金額
-    let finalMaxAmount = basePrize + extraGift; // 最終總額
+        let basePrize = Math.max(...scores); 
+        const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300); 
+        finalMaxAmount = basePrize + extraGift; 
 
-    // 處理避開數字 4 的邏輯 (針對最終總額)
-    if (finalMaxAmount.toString().includes('4')) {
-        finalMaxAmount = parseInt(finalMaxAmount.toString().replace(/4/g, '8'));
-        document.getElementById('bonusNote').style.display = 'block';
-    }
-
-    nextStep(4, 5); // 切換到結果頁
-
-    // --- 第一階段：數字滾動到基礎最大值 ---
-    let speed = 3000; // 滾動速度
-    let startTime = performance.now();
-    
-    function animateToBase(now) {
-        const progress = Math.min((now - startTime) / speed, 1);
-        const currentDisplay = Math.floor(progress * basePrize);
-        document.getElementById('finalPrize').innerText = "$" + currentDisplay.toLocaleString();
-        
-        if (progress < 1) {
-            requestAnimationFrame(animateToBase);
-        } else {
-            // --- 第二階段：基礎數字跑完，跳出加碼金額 ---
-            setTimeout(() => {
-                const bonusDiv = document.getElementById('bonusDisplay');
-                document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
-                bonusDiv.style.display = 'block';
-                bonusDiv.classList.add('pop-animation'); // 加入跳出動畫
-
-                // --- 第三階段：總金額更新為最終金額 ---
-                setTimeout(() => {
-                    document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
-                    document.getElementById('finalPrize').style.color = 'var(--primary-red)';
-                    document.getElementById('finalPrize').style.transform = 'scale(1.1)';
-                    document.getElementById('finalPrize').style.transition = '0.3s';
-                    
-                    // 顯示 Line 按鈕與慶祝
-                    document.getElementById('lineBtn').style.display = 'block';
-                    document.getElementById('extraBonusTag').style.display = 'inline-block';
-                    speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總共是${finalMaxAmount}元！發財了！`);
-                    launchEpicPinkGoldConfetti();
-                }, 800); 
-            }, 500);
+        if (finalMaxAmount.toString().includes('4')) {
+            finalMaxAmount = parseInt(finalMaxAmount.toString().replace(/4/g, '8'));
+            document.getElementById('bonusNote').style.display = 'block';
         }
+
+        nextStep(4, 5); 
+
+        let speed = 3000; 
+        let startTime = performance.now();
+        
+        function animateToBase(now) {
+            const progress = Math.min((now - startTime) / speed, 1);
+            const currentDisplay = Math.floor(progress * basePrize);
+            document.getElementById('finalPrize').innerText = "$" + currentDisplay.toLocaleString();
+            
+            if (progress < 1) {
+                requestAnimationFrame(animateToBase);
+            } else {
+                setTimeout(() => {
+                    const bonusDiv = document.getElementById('bonusDisplay');
+                    document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
+                    bonusDiv.style.display = 'block';
+                    bonusDiv.classList.add('pop-animation'); 
+
+                    setTimeout(() => {
+                        document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
+                        document.getElementById('finalPrize').style.color = 'var(--primary-red)';
+                        document.getElementById('finalPrize').style.transform = 'scale(1.1)';
+                        document.getElementById('finalPrize').style.transition = '0.3s';
+                        
+                        document.getElementById('lineBtn').style.display = 'block';
+                        document.getElementById('extraBonusTag').style.display = 'inline-block';
+                        speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總額${finalMaxAmount}元！發財了！`);
+                        launchEpicPinkGoldConfetti();
+                    }, 800); 
+                }, 500);
+            }
+        }
+        requestAnimationFrame(animateToBase);
     }
-    requestAnimationFrame(animateToBase);
-}
-    }
-    requestAnimationFrame(animateNumber);
-}
 
     function launchEpicPinkGoldConfetti() {
         const end = Date.now() + (5 * 1000);
@@ -317,26 +310,18 @@
     }
 
     function sendToLine() {
-    // 1. 請將下方連結換成您個人的 Line 好友連結
-    // 取得方式：Line 主頁 > 加好友 > 行動條碼 > 我的行動條碼 > 複製連結
-    const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
-    
-    // 2. 準備要傳送的訊息文字
-    const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
-    
-    // 3. 使用 Line 分享協議（這是最能確保訊息被帶入的方式）
-    const lineShareUrl = `https://line.it/R/msg/text/?${message}`;
-    
-    // 嘗試開啟 Line 並帶入訊息
-    window.location.href = lineShareUrl;
+        const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
+        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
+        const lineShareUrl = `https://line.it/R/msg/text/?${message}`;
+        
+        window.location.href = lineShareUrl;
 
-    // 備用方案：如果 1 秒後沒反應，導向您的好友連結（讓媽媽可以直接加好友或發訊息）
-    setTimeout(() => {
-        if (!document.hidden) {
-            window.location.href = lineFriendLink;
-        }
-    }, 1000);
-}
+        setTimeout(() => {
+            if (!document.hidden) {
+                window.location.href = lineFriendLink;
+            }
+        }, 1000);
+    }
 </script>
 
 </body>
