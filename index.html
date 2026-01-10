@@ -142,7 +142,7 @@
 
     <div id="step4" class="step">
         <h2>🎰 財神來敲門</h2>
-        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並額外加碼！</b></p>
+        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並有機會獲得隨機加碼！</b></p>
         <div class="slot-machine">
             <div id="currentPrize">$0</div>
             <div class="history-pills" id="historyPills"></div>
@@ -151,21 +151,24 @@
     </div>
 
     <div id="step5" class="step">
-        <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-        <div class="final-amount" id="finalPrize">$0</div>
-        
-        <div id="bonusContainer">
-            <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
-                ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
-            </p>
-            <div class="bonus-tag" id="extraBonusTag" style="display:none;">✨ 粉金加碼：私房錢隨機加碼送達 🚀</div>
-        </div>
-
-        <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
-
-        <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
-        <p style="font-size: 0.9rem; color: #888;">祝您蛇年行大運，平安健康，<br>股票張張漲不停！ 📈❤️</p>
+    <div style="font-size: 2.2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
+    <p style="margin-top: 10px;">您獲得的 2026 蛇年紅包總額：</p>
+    
+    <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.6rem; font-weight: bold; margin-bottom: 10px; animation: bounceIn 0.8s both;">
+        兒子驚喜加碼：+$<span id="bonusValue">0</span>
     </div>
+
+    <div class="final-amount" id="finalPrize">$0</div>
+    
+    <div id="bonusContainer">
+        <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
+            ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
+        </p>
+        <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
+    </div>
+
+    <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
+    <p style="color: #666; font-weight: bold; margin-top: 20px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
 </div>
 
 <script>
@@ -207,8 +210,8 @@
     function draw() {
         const btn = document.getElementById('drawBtn');
         btn.disabled = true;
-        const min = 8800;
-        const max = 16800;
+        const min = 10800;
+        const max = 18800;
         let counter = 0;
         
         const timer = setInterval(() => {
@@ -241,35 +244,49 @@
     }
 
     function showFinal() {
-        let maxPrize = Math.max(...scores);
-        // 1. 隨機加碼 300 - 500
-        maxPrize += Math.floor(Math.random() * (500 - 300 + 1) + 300);
+    let maxPrize = Math.max(...scores);
+    
+    // 1. 隨機計算加碼金額 (300 - 500)
+    const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300);
+    
+    // 2. 顯示加碼金額區塊
+    document.getElementById('bonusDisplay').style.display = 'block';
+    document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
+    
+    // 3. 總金額累加
+    maxPrize += extraGift;
 
-        // 2. 避開數字 4 變更為 8
-        if (maxPrize.toString().includes('4')) {
-            maxPrize = parseInt(maxPrize.toString().replace(/4/g, '8'));
-            document.getElementById('bonusNote').style.display = 'block';
-        }
-        finalMaxAmount = maxPrize;
-
-        nextStep(4, 5);
-        document.getElementById('extraBonusTag').style.display = 'inline-block';
-
-        let speed = 1500;
-        let startTime = performance.now();
-        function animateNumber(now) {
-            const progress = Math.min((now - startTime) / speed, 1);
-            document.getElementById('finalPrize').innerText = "$" + Math.floor(progress * finalMaxAmount).toLocaleString();
-            if (progress < 1) requestAnimationFrame(animateNumber);
-            else {
-                document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
-                document.getElementById('lineBtn').style.display = 'block';
-                speak("發財了！發財了！恭喜媽媽發大財！");
-                launchEpicPinkGoldConfetti();
-            }
-        }
-        requestAnimationFrame(animateNumber);
+    // 4. 避開數字 4 變更為 8
+    if (maxPrize.toString().includes('4')) {
+        maxPrize = parseInt(maxPrize.toString().replace(/4/g, '8'));
+        document.getElementById('bonusNote').style.display = 'block';
     }
+    finalMaxAmount = maxPrize;
+
+    nextStep(4, 5);
+    document.getElementById('extraBonusTag').style.display = 'inline-block';
+
+    // 數字滾動動畫 (speed 可依需求調整，3000 為 3秒)
+    let speed = 3000; 
+    let startTime = performance.now();
+    
+    function animateNumber(now) {
+        const progress = Math.min((now - startTime) / speed, 1);
+        document.getElementById('finalPrize').innerText = "$" + Math.floor(progress * finalMaxAmount).toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(animateNumber);
+        } else {
+            document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
+            document.getElementById('lineBtn').style.display = 'block';
+            
+            // 播報語音：會先說出金額，再說發財了
+            speak(`恭喜媽媽抽到 ${finalMaxAmount} 元！發財了！發財了！恭喜媽媽發大財！`);
+            launchEpicPinkGoldConfetti();
+        }
+    }
+    requestAnimationFrame(animateNumber);
+}
 
     function launchEpicPinkGoldConfetti() {
         const end = Date.now() + (5 * 1000);
