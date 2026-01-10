@@ -16,10 +16,7 @@
             --bg-gradient: linear-gradient(135deg, #8b0000 0%, #e63946 50%, #d00000 100%);
         }
 
-        body 
-            <audio id="spinSound" src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3"></audio>
-            <audio id="stopSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
-            <audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"></audio>{
+        body {
             font-family: 'Noto Sans TC', sans-serif;
             background: var(--bg-gradient);
             height: 100vh;
@@ -123,6 +120,10 @@
 </head>
 <body>
 
+<audio id="spinSound" src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3"></audio>
+<audio id="stopSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+<audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"></audio>
+
 <div class="container">
     <div id="step1" class="step active">
         <h2 style="letter-spacing: 2px;">🐍 2026 靈蛇獻瑞</h2>
@@ -133,7 +134,7 @@
 
     <div id="step2" class="step">
         <h2>🐍 龍去蛇來</h2>
-        <p>回顧 2025 年對愛子「熊剛」<br>的綜合評分：</p>
+        <p>回顧 2025 年對愛子「熊剛」評分：</p>
         <select id="satisfaction">
             <option value="">-- 請給予愛的評分 --</option>
             <option value="100">✨ 完美！兒子是我的驕傲</option>
@@ -174,20 +175,16 @@
     <div id="step5" class="step">
         <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
         <p style="margin-top: 10px;">您的 2026 蛇年紅包總額：</p>
-        
         <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">
             兒子驚喜加碼：+$<span id="bonusValue">0</span>
         </div>
-
         <div class="final-amount" id="finalPrize">$0</div>
-        
         <div id="bonusContainer">
             <p id="bonusNote" style="color: #d63031; font-weight: bold; margin-bottom: 5px; display: none;">
                 ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
             </p>
             <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
         </div>
-
         <button id="lineBtn" class="line-btn" onclick="sendToLine()">✅ 點擊領取紅包獎金</button>
         <p style="color: #666; font-size: 0.85rem; font-weight: bold; margin-top: 15px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
     </div>
@@ -198,6 +195,11 @@
     let count = 3;
     let finalMaxAmount = 0;
     const pinkGoldColors = ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'];
+
+    function playSnd(id) {
+        const audio = document.getElementById(id);
+        if (audio) { audio.currentTime = 0; audio.play(); }
+    }
 
     function nextStep(current, next) {
         document.getElementById('step' + current).classList.remove('active');
@@ -218,8 +220,7 @@
 
     function speak(text) {
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'zh-TW';
-        msg.rate = 1.1;
+        msg.lang = 'zh-TW'; msg.rate = 1.1;
         window.speechSynthesis.speak(msg);
     }
 
@@ -230,73 +231,54 @@
     }
 
     function draw() {
-    const btn = document.getElementById('drawBtn');
-    btn.disabled = true;
-    
-    // 播放拉霸旋轉音效
-    const spinSnd = document.getElementById('spinSound');
-    spinSnd.currentTime = 0;
-    spinSnd.play();
-    
-    const min = 10800;
-    const max = 36800;
-    let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
-    const finalStr = finalAmount.toString().padStart(5, '0');
+        const btn = document.getElementById('drawBtn');
+        btn.disabled = true;
+        playSnd('spinSound');
+        
+        const min = 10800;
+        const max = 36800;
+        let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
+        const finalStr = finalAmount.toString().padStart(5, '0');
 
-    const reels = [1,2,3,4,5].map(i => document.getElementById('reel' + i));
+        const reels = [1,2,3,4,5].map(i => document.getElementById('reel' + i));
+        document.getElementById('reel0').classList.add('spinning');
+        let intervals = reels.map((reel, i) => {
+            reel.classList.add('spinning');
+            return setInterval(() => { reel.innerText = Math.floor(Math.random() * 10); }, 50 + (i * 20));
+        });
 
-    // 開始旋轉
-    document.getElementById('reel0').classList.add('spinning');
-    let intervals = reels.map((reel, i) => {
-        reel.classList.add('spinning');
-        return setInterval(() => {
-            reel.innerText = Math.floor(Math.random() * 10);
-        }, 50 + (i * 20));
-    });
+        reels.forEach((reel, i) => {
+            setTimeout(() => {
+                clearInterval(intervals[i]);
+                reel.classList.remove('spinning');
+                reel.innerText = finalStr[i];
+                playSnd('stopSound');
 
-    // 依序停止
-    reels.forEach((reel, i) => {
-        setTimeout(() => {
-            clearInterval(intervals[i]);
-            reel.classList.remove('spinning');
-            reel.innerText = finalStr[i];
-            
-            // 每個滾輪停下時播放鈴聲
-            const stopSnd = document.getElementById('stopSound');
-            stopSnd.currentTime = 0;
-            stopSnd.play();
-
-            if (i === reels.length - 1) {
-                document.getElementById('reel0').classList.remove('spinning');
-                finishDraw(finalAmount);
-            }
-        }, 1000 + (i * 400));
-    });
-}
+                if (i === reels.length - 1) {
+                    document.getElementById('reel0').classList.remove('spinning');
+                    finishDraw(finalAmount);
+                }
+            }, 1000 + (i * 400));
+        });
+    }
 
     function finishDraw(finalAmount) {
-    scores.push(finalAmount);
-    count--;
-    updatePills();
-    
-    // 每次抽獎結果出來即灑花一次
-    confetti({ 
-        particleCount: 100, 
-        spread: 70, 
-        origin: { y: 0.6 }, 
-        colors: pinkGoldColors 
-    });
+        scores.push(finalAmount);
+        count--;
+        updatePills();
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: pinkGoldColors });
 
-    const btn = document.getElementById('drawBtn');
-    if (count > 0) {
-        btn.innerText = `再抽一次 (剩 ${count} 次)`;
-        btn.disabled = false;
-    } else {
-        btn.innerText = "查看最終加碼成果";
-        btn.disabled = false;
-        btn.onclick = showFinal;
+        const btn = document.getElementById('drawBtn');
+        if (count > 0) {
+            btn.innerText = `再抽一次 (剩 ${count} 次)`;
+            btn.disabled = false;
+        } else {
+            btn.innerText = "查看最終加碼成果";
+            btn.disabled = false;
+            btn.onclick = showFinal;
+        }
     }
-}
+
     function updatePills() {
         document.getElementById('historyPills').innerHTML = scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
     }
@@ -337,7 +319,9 @@
                         
                         document.getElementById('lineBtn').style.display = 'block';
                         document.getElementById('extraBonusTag').style.display = 'inline-block';
-                        speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總額${finalMaxAmount}元！發財了！發財了！發財了！發財了！發財了！`);
+                        
+                        playSnd('cheerSound'); // 播放歡呼聲
+                        speak(`恭喜媽媽！總額${finalMaxAmount}元！發財了！發財了！`);
                         launchEpicPinkGoldConfetti();
                     }, 800); 
                 }, 500);
@@ -351,18 +335,13 @@
         const infiniteConfetti = setInterval(() => {
             confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: pinkGoldColors });
             confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: pinkGoldColors });
-            if (Math.random() > 0.7) {
-                confetti({ particleCount: 15, spread: 80, origin: { x: Math.random(), y: Math.random() - 0.2 }, colors: pinkGoldColors });
-            }
         }, 300);
         document.getElementById('lineBtn').addEventListener('click', () => clearInterval(infiniteConfetti));
     }
 
     function sendToLine() {
-        const lineFriendLink = "https://line.me/ti/p/BKTHz2W0VH"; 
-        const message = encodeURIComponent(`兒子！我抽到蛇年大紅包了！🧨\n最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
-        window.location.href = `https://line.it/R/msg/text/?${message}`;
-        setTimeout(() => { if (!document.hidden) window.location.href = lineFriendLink; }, 1000);
+        const msg = encodeURIComponent(`兒子！紅包最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
+        window.location.href = `https://line.it/R/msg/text/?${msg}`;
     }
 </script>
 </body>
