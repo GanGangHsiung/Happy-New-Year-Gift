@@ -299,9 +299,8 @@
         }
         requestAnimationFrame(animateToBase);
     }
-
-    function launchEpicPinkGoldConfetti() {
-    // 1. 瞬間全螢幕大爆發 (開場白)
+function launchEpicPinkGoldConfetti() {
+    // 1. 瞬間全螢幕大爆發 (給媽媽的第一眼衝擊)
     confetti({
         particleCount: 150,
         spread: 100,
@@ -309,43 +308,45 @@
         colors: pinkGoldColors
     });
 
-    // 2. 無限循環噴發
-    // 使用 setInterval 每 300 毫秒噴發一次
+    // 2. 設定無限循環噴發
+    // 將 interval 存入全域或當前作用域，確保下方 lineBtn 能清除它
     const infiniteConfetti = setInterval(function() {
-        // 如果媽媽已經點擊按鈕或離開頁面，可以在這裡視情況停止，
-        // 但若要「永不停止」，就讓它一直跑。
-        
-        // 隨機噴發位置與量
+        // 左側噴發
         confetti({
             particleCount: 5,
             angle: 60,
             spread: 55,
-            origin: { x: 0, y: 0.8 }, // 左側
+            origin: { x: 0, y: 0.8 },
             colors: pinkGoldColors
         });
+        
+        // 右側噴發
         confetti({
             particleCount: 5,
             angle: 120,
             spread: 55,
-            origin: { x: 1, y: 0.8 }, // 右側
+            origin: { x: 1, y: 0.8 },
             colors: pinkGoldColors
         });
         
-        // 偶爾隨機在中間噴一下
+        // 隨機中間噴發 (增加瘋狂感)
         if (Math.random() > 0.7) {
             confetti({
-                particleCount: 10,
+                particleCount: 15,
                 spread: 80,
                 origin: { x: Math.random(), y: Math.random() - 0.2 },
                 colors: pinkGoldColors
             });
         }
-    }, 300); 
+    }, 300); // 每 0.3 秒噴一次，頻率很高，畫面會非常熱鬧
 
-    // 為了保險起見，如果媽媽點擊了 Line 按鈕，可以選擇停止噴發（可選）
-    document.getElementById('lineBtn').addEventListener('click', () => {
-        clearInterval(infiniteConfetti);
-    });
+    // 3. 綁定按鈕點擊事件：當媽媽點擊領取時，停止噴發以免干擾 Line 的跳轉
+    const lineBtn = document.getElementById('lineBtn');
+    if (lineBtn) {
+        lineBtn.addEventListener('click', () => {
+            clearInterval(infiniteConfetti);
+        });
+    }
 }
 
     function sendToLine() {
