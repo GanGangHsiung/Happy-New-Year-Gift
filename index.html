@@ -222,7 +222,7 @@
         const btn = document.getElementById('drawBtn');
         btn.disabled = true;
         const min = 10800;
-        const max = 36800;
+        const max = 33800;
         let counter = 0;
         
         const timer = setInterval(() => {
@@ -256,7 +256,7 @@
 
     function showFinal() {
         let basePrize = Math.max(...scores); 
-        const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300); 
+        const extraGift = Math.floor(Math.random() * (5000 - 3000 + 1) + 3000); 
         finalMaxAmount = basePrize + extraGift; 
 
         if (finalMaxAmount.toString().includes('4')) {
@@ -291,7 +291,7 @@
                         
                         document.getElementById('lineBtn').style.display = 'block';
                         document.getElementById('extraBonusTag').style.display = 'inline-block';
-                        speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總額${finalMaxAmount}元！發財了！`);
+                        speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總額${finalMaxAmount}元！發財了！發財了！發財了！發財了！發財了！`);
                         launchEpicPinkGoldConfetti();
                     }, 800); 
                 }, 500);
