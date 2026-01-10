@@ -115,7 +115,30 @@
         }
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-    </style>
+    .slot-reel {
+    width: 50px;
+    height: 70px;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--primary-red);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    text-shadow: 2px 2px 0px var(--shiny-gold);
+    overflow: hidden;
+}
+
+/* 旋轉時的動態模糊類別 */
+.spinning {
+    filter: blur(2px);
+    transform: scale(0.95);
+    transition: 0.1s;
+}
+       </style>
 </head>
 <body>
 
@@ -151,13 +174,21 @@
     </div>
 
     <div id="step4" class="step">
-        <h2>🎰 財神來敲門</h2>
-        <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並有機會獲得隨機加碼！</b></p>
-        <div class="slot-machine">
-            <div id="currentPrize">$0</div>
-            <div class="history-pills" id="historyPills"></div>
+    <h2>🎰 財神來敲門</h2>
+    <p>系統將連續為您進行三次隨機抽籤<br><b style="color:var(--dark-red)">最終將取最大值並有機會獲得隨機加碼！</b></p>
+    
+    <div class="slot-machine">
+        <div id="slotContainer" style="display: flex; justify-content: center; gap: 5px; margin-bottom: 15px;">
+            <div class="slot-reel" id="reel0">$</div>
+            <div class="slot-reel" id="reel1">0</div>
+            <div class="slot-reel" id="reel2">0</div>
+            <div class="slot-reel" id="reel3">0</div>
+            <div class="slot-reel" id="reel4">0</div>
         </div>
-        <button id="drawBtn" onclick="draw()">點我抽紅包 (剩 3 次)</button>
+        <div class="history-pills" id="historyPills"></div>
+    </div>
+    
+    <button id="drawBtn" onclick="draw()">點我抽紅包 (剩 3 次)</button>
     </div>
 
     <div id="step5" class="step">
@@ -219,35 +250,79 @@
     }
 
     function draw() {
-        const btn = document.getElementById('drawBtn');
-        btn.disabled = true;
-        const min = 20800;
-        const max = 33800;
-        let counter = 0;
-        
-        const timer = setInterval(() => {
-            const tempAmount = Math.floor(Math.random() * (max - min + 1) + min);
-            document.getElementById('currentPrize').innerText = "$" + tempAmount.toLocaleString();
-            if (counter++ > 20) {
-                clearInterval(timer);
-                let finalAmount = avoidFour(Math.floor(Math.random() * (max - min + 1) + min));
-                document.getElementById('currentPrize').innerText = "$" + finalAmount.toLocaleString();
-                scores.push(finalAmount);
-                count--;
-                updatePills();
-                
-                if (count > 0) {
-                    btn.innerText = `再抽一次 (剩 ${count} 次)`;
-                    btn.disabled = false;
-                } else {
-                    btn.innerText = "查看最終加碼成果";
-                    btn.disabled = false;
-                    btn.onclick = showFinal;
-                }
-                confetti({ particleCount: 60, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
+    const btn = document.getElementById('drawBtn');
+    btn.disabled = true;
+    
+    const min = 10800;
+    const max = 36800;
+    
+    // 1. 決定最終金額 (並避開 4)
+    let finalAmount = Math.floor(Math.random() * (max - min + 1) + min);
+    finalAmount = avoidFour(finalAmount); 
+    const finalStr = finalAmount.toString().padStart(5, '0'); // 補齊 5 位數，例如 "12800"
+
+    const reels = [
+        document.getElementById('reel1'),
+        document.getElementById('reel2'),
+        document.getElementById('reel3'),
+        document.getElementById('reel4')
+    ];
+
+    // 2. 開始旋轉動畫
+    let spinIntervals = [];
+    
+    // 讓 $ 符號晃動一下
+    document.getElementById('reel0').classList.add('spinning');
+
+    reels.forEach((reel, index) => {
+        reel.classList.add('spinning');
+        // 每個滾輪跳動數字
+        const interval = setInterval(() => {
+            reel.innerText = Math.floor(Math.random() * 10);
+        }, 50 + (index * 20)); // 每個滾輪速度略有不同
+        spinIntervals.push(interval);
+    });
+
+    // 3. 依序停止滾輪
+    reels.forEach((reel, index) => {
+        setTimeout(() => {
+            clearInterval(spinIntervals[index]);
+            reel.classList.remove('spinning');
+            reel.innerText = finalStr[index + 1]; // 填入最終金額的數字 (跳過第一位，因為第一位是 $ 符號後的數字)
+            
+            // 處理第一位數字 (萬位)
+            if (index === 0) {
+                // 如果是第一個滾輪停止，萬位數字設定好
+                document.getElementById('reel1').innerText = finalStr[0];
             }
-        }, 40);
+            
+            // 每次停止發出一個小震動或音效感 (可選)
+            if (index === reels.length - 1) {
+                // 全部停止後的收尾
+                document.getElementById('reel0').classList.remove('spinning');
+                finishDraw(finalAmount);
+            }
+        }, 1000 + (index * 400)); // 每隔 0.4 秒停一個
+    });
+}
+
+function finishDraw(finalAmount) {
+    const btn = document.getElementById('drawBtn');
+    scores.push(finalAmount);
+    count--;
+    updatePills();
+    
+    confetti({ particleCount: 80, spread: 70, colors: pinkGoldColors, origin: { y: 0.6 } });
+
+    if (count > 0) {
+        btn.innerText = `再抽一次 (剩 ${count} 次)`;
+        btn.disabled = false;
+    } else {
+        btn.innerText = "查看最終加碼成果";
+        btn.disabled = false;
+        btn.onclick = showFinal;
     }
+}
 
     function updatePills() {
         const container = document.getElementById('historyPills');
