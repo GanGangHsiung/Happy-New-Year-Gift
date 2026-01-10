@@ -104,6 +104,16 @@
             display: inline-block; background: var(--pink); color: white; padding: 4px 12px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-top: 5px; animation: pulse 1s infinite;
         }
 
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .pop-animation {
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -211,7 +221,7 @@
         const btn = document.getElementById('drawBtn');
         btn.disabled = true;
         const min = 10800;
-        const max = 18800;
+        const max = 36800;
         let counter = 0;
         
         const timer = setInterval(() => {
@@ -244,46 +254,55 @@
     }
 
     function showFinal() {
-    let maxPrize = Math.max(...scores);
-    
-    // 1. 隨機計算加碼金額 (300 - 500)
-    const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300);
-    
-    // 2. 顯示加碼金額區塊
-    document.getElementById('bonusDisplay').style.display = 'block';
-    document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
-    
-    // 3. 總金額累加
-    maxPrize += extraGift;
+    let basePrize = Math.max(...scores); // 這是加碼前的最高分
+    const extraGift = Math.floor(Math.random() * (500 - 300 + 1) + 300); // 加碼金額
+    let finalMaxAmount = basePrize + extraGift; // 最終總額
 
-    // 4. 避開數字 4 變更為 8
-    if (maxPrize.toString().includes('4')) {
-        maxPrize = parseInt(maxPrize.toString().replace(/4/g, '8'));
+    // 處理避開數字 4 的邏輯 (針對最終總額)
+    if (finalMaxAmount.toString().includes('4')) {
+        finalMaxAmount = parseInt(finalMaxAmount.toString().replace(/4/g, '8'));
         document.getElementById('bonusNote').style.display = 'block';
     }
-    finalMaxAmount = maxPrize;
 
-    nextStep(4, 5);
-    document.getElementById('extraBonusTag').style.display = 'inline-block';
+    nextStep(4, 5); // 切換到結果頁
 
-    // 數字滾動動畫 (speed 可依需求調整，3000 為 3秒)
-    let speed = 10000; 
+    // --- 第一階段：數字滾動到基礎最大值 ---
+    let speed = 3000; // 滾動速度
     let startTime = performance.now();
     
-    function animateNumber(now) {
+    function animateToBase(now) {
         const progress = Math.min((now - startTime) / speed, 1);
-        document.getElementById('finalPrize').innerText = "$" + Math.floor(progress * finalMaxAmount).toLocaleString();
+        const currentDisplay = Math.floor(progress * basePrize);
+        document.getElementById('finalPrize').innerText = "$" + currentDisplay.toLocaleString();
         
         if (progress < 1) {
-            requestAnimationFrame(animateNumber);
+            requestAnimationFrame(animateToBase);
         } else {
-            document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
-            document.getElementById('lineBtn').style.display = 'block';
-            
-            // 播報語音：會先說出金額，再說發財了
-            speak(`恭喜媽媽抽到 ${finalMaxAmount} 元！發財了！發財了！恭喜媽媽發大財！`);
-            launchEpicPinkGoldConfetti();
+            // --- 第二階段：基礎數字跑完，跳出加碼金額 ---
+            setTimeout(() => {
+                const bonusDiv = document.getElementById('bonusDisplay');
+                document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
+                bonusDiv.style.display = 'block';
+                bonusDiv.classList.add('pop-animation'); // 加入跳出動畫
+
+                // --- 第三階段：總金額更新為最終金額 ---
+                setTimeout(() => {
+                    document.getElementById('finalPrize').innerText = "$" + finalMaxAmount.toLocaleString();
+                    document.getElementById('finalPrize').style.color = 'var(--primary-red)';
+                    document.getElementById('finalPrize').style.transform = 'scale(1.1)';
+                    document.getElementById('finalPrize').style.transition = '0.3s';
+                    
+                    // 顯示 Line 按鈕與慶祝
+                    document.getElementById('lineBtn').style.display = 'block';
+                    document.getElementById('extraBonusTag').style.display = 'inline-block';
+                    speak(`恭喜媽媽！基礎獎金${basePrize}元，兒子再加碼${extraGift}元，總共是${finalMaxAmount}元！發財了！`);
+                    launchEpicPinkGoldConfetti();
+                }, 800); 
+            }, 500);
         }
+    }
+    requestAnimationFrame(animateToBase);
+}
     }
     requestAnimationFrame(animateNumber);
 }
