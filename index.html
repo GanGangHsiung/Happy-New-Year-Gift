@@ -28,7 +28,7 @@
             position: relative; /* 確保紅包雨定位 */
         }
 
-        /* --- 新增：紅包雨 CSS --- */
+        /* --- 紅包雨 CSS --- */
         .red-packet {
             position: absolute;
             width: 30px;
@@ -140,6 +140,19 @@
         }
         .pop-animation { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        @keyframes goldShine {
+            0% { background-position: -200%; }
+            100% { background-position: 200%; }
+        }
+        .final-amount {
+            background: linear-gradient(90deg, #ffb703, #fff, #ffb703);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShine 3s linear infinite;
+            display: inline-block;
+        }
     </style>
 </head>
 <body onclick="initAudio()">
@@ -234,7 +247,7 @@
         if (audio) { audio.currentTime = 0; audio.play(); }
     }
 
-    // --- 新增：紅包雨腳本 ---
+    // --- 紅包雨腳本 ---
     function createRedPacket() {
         const rp = document.createElement('div');
         rp.className = 'red-packet';
@@ -279,6 +292,15 @@
         const btn = document.getElementById('drawBtn');
         btn.disabled = true;
         playSnd('spinSound');
+
+        // --- 新增功能：按鈕動態文字 ---
+        const loadingTexts = ["手氣加持中...", "財神正在點錢...", "熊剛的私房錢跳動中...", "運勢上升中...", "正在載入福氣..."];
+        let textIdx = 0;
+        const textInterval = setInterval(() => {
+            btn.innerText = loadingTexts[textIdx % loadingTexts.length];
+            textIdx++;
+        }, 400);
+        // ---------------------------
         
         const min = 10800;
         const max = 36800;
@@ -300,6 +322,7 @@
                 playSnd('stopSound');
 
                 if (i === reels.length - 1) {
+                    clearInterval(textInterval); // 停止跳動文字
                     document.getElementById('reel0').classList.remove('spinning');
                     finishDraw(finalAmount);
                 }
@@ -392,6 +415,27 @@
         const msg = encodeURIComponent(`兒子！紅包最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
         window.location.href = `https://line.it/R/msg/text/?${msg}`;
     }
+
+    // --- 新增功能：點擊擴散特效 ---
+    document.addEventListener('click', (e) => {
+        // 避免在點擊按鈕時觸發（防止視覺太混亂）
+        if (e.target.tagName !== 'BUTTON') {
+            confetti({
+                particleCount: 6,
+                startVelocity: 20,
+                spread: 360,
+                ticks: 60,
+                origin: { 
+                    x: e.clientX / window.innerWidth, 
+                    y: e.clientY / window.innerHeight 
+                },
+                colors: ['#ffb703', '#ff69b4', '#ffffff'],
+                shapes: ['circle'],
+                gravity: 1,
+                scalar: 0.7
+            });
+        }
+    });
 </script>
 </body>
 </html>
