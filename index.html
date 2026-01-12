@@ -411,9 +411,26 @@
     }
 
     function sendToLine() {
-        playSnd('clickSound');
-        const msg = encodeURIComponent(`兒子！紅包最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`);
-        window.location.href = `https://line.it/R/msg/text/?${msg}`;
+    playSnd('clickSound');
+    
+    // 1. 準備訊息內容
+    const message = `兒子！紅包最後金額是：$${finalMaxAmount.toLocaleString()}\n我剛剛還聽到發財了，快發給我！❤️`;
+    
+    // 2. 使用官方推薦的 https 協定網址
+    const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
+    
+    // 3. 建立一個隱藏的 a 標籤 (這是行動端最穩定的觸發方式)
+    const link = document.createElement('a');
+    link.href = lineUrl;
+    
+    // 確保在某些瀏覽器中能正常開啟外部 App
+    link.target = '_blank'; 
+    link.rel = 'noopener noreferrer';
+    
+    // 4. 加入 DOM 並觸發點擊後移除
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     }
 
     // --- 新增功能：點擊擴散特效 ---
