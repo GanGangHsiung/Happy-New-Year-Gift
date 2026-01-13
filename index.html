@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 蛇年大吉 - 熊剛的紅包抽獎</title>
+    <title>2026 馬年大吉 - 熊剛的紅包抽獎</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -35,6 +35,31 @@
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
         .pop-animation { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        /* [綠色] 福袋搖晃動畫 CSS */
+        .lucky-bag { 
+            font-size: 80px; 
+            display: none; 
+            margin: 20px auto; 
+            animation: shake 0.5s infinite; 
+            cursor: default; 
+        }
+        @keyframes shake { 
+            0% { transform: rotate(0deg); } 
+            25% { transform: rotate(10deg); } 
+            50% { transform: rotate(0deg); } 
+            75% { transform: rotate(-10deg); } 
+            100% { transform: rotate(0deg); } 
+        }
+        
+        /* [紅色] 誇獎區塊背景樣式 */
+        #praiseSection {
+            display: none; 
+            margin-top: 20px; 
+            padding: 15px; 
+            background: #fffceb; /* 淺黃色營造溫馨感 */
+            border-radius: 15px; 
+            border: 2px dashed #ffb703;
+        }
     </style>
 </head>
 <body onclick="AudioManager.init()">
@@ -47,14 +72,14 @@
 
 <div class="container">
     <div id="step1" class="step active">
-        <h2 style="letter-spacing: 2px;">🐍 2026 靈蛇獻瑞</h2>
+        <h2 style="letter-spacing: 2px;">🐍 2026 寶馬獻瑞</h2>
         <p>紅包領取系統身分識別：</p>
         <input type="text" id="nameInput" placeholder="請輸入誰是世界上最帥的兒子？">
         <button onclick="App.checkStep1()">開啟福氣門</button>
     </div>
 
     <div id="step2" class="step">
-        <h2>🐍 龍去蛇來</h2>
+        <h2>🐍 超級馬利歐</h2>
         <p>回顧 2025 年對愛子「熊剛」<br>評分：</p>
         <select id="satisfaction">
             <option value="">-- 請給予愛的評分 --</option>
@@ -76,6 +101,12 @@
         <button onclick="App.checkStep3()">辛苦了，乖兒子</button>
     </div>
 
+    <div id="step3_5" class="step">
+        <h2>🧧 財氣匯聚中</h2>
+        <p>媽媽，妳準備好要開始抽取<br><b style="color:#e63946; font-size: 1.4rem;">新年特大紅包</b>了嗎？</p>
+        <button onclick="App.nextStep('3_5', 4)">我準備好了！大獎來！</button>
+    </div>
+
     <div id="step4" class="step">
         <h2>🎰財神來敲門</h2>
         <p>系統將連續抽籤三次取最高值<br><b style="color:var(--dark-red)">並隨機獲得兒子加碼！</b></p>
@@ -94,8 +125,9 @@
     </div>
 
     <div id="step5" class="step">
+        <div id="luckyBag" class="lucky-bag">💰</div>
         <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-        <p style="margin-top: 10px;">您的 2026 蛇年紅包總額：</p>
+        <p style="margin-top: 10px;">您的 2026 馬年紅包總額：</p>
         <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">
             兒子驚喜加碼：+$<span id="bonusValue">0</span>
         </div>
@@ -107,6 +139,11 @@
             <div class="bonus-tag" id="extraBonusTag" style="display:none;">兒子私房錢加碼送達 🚀</div>
         </div>
         <button id="lineBtn" class="line-btn" onclick="LineBridge.send(App.state.finalMaxAmount)">✅ 點擊領取紅包獎金</button>
+        <div id="praiseSection">
+                <p style="font-weight: bold; color: #d4a017;">✨ 偷偷告訴妳 ✨</p>
+                <p>整個程式、網頁、運作邏輯、甚至連紅包雨的架構都是妳兒子<b>親手寫的</b>，是不是非常厲害！</p>
+                <button onclick="LineBridge.send(App.state.finalMaxAmount)">真的非常厲害！領紅包去 ❤️</button>
+            </div>
         <p style="color: #666; font-size: 0.85rem; font-weight: bold; margin-top: 15px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
     </div>
 </div>
@@ -282,6 +319,8 @@
             }
 
             this.nextStep(4, 5);
+            const bag = document.getElementById('luckyBag');
+            const content = document.getElementById('resultContent');
             
             let startTime = performance.now();
             const animate = (now) => {
