@@ -69,6 +69,7 @@
 <audio id="stopSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
 <audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"></audio>
 <audio id="finalCheer" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+<audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3"></audio>
 
 <div class="container">
     <div id="step1" class="step active">
@@ -126,6 +127,7 @@
 
     <div id="step5" class="step">
         <div id="luckyBag" class="lucky-bag">💰</div>
+        <div id="resultContent"></div>
         <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
         <p style="margin-top: 10px;">您的 2026 馬年紅包總額：</p>
         <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">
@@ -322,12 +324,23 @@
             const bag = document.getElementById('luckyBag');
             const content = document.getElementById('resultContent');
             
+            // [綠色] 控制福袋出現，暫時隱藏結果
+            content.style.display = 'none';
+            bag.style.display = 'block';
+            AudioManager.play('spinSound');
+
             let startTime = performance.now();
             const animate = (now) => {
                 const progress = Math.min((now - startTime) / 2500, 1);
                 document.getElementById('finalPrize').innerText = "$" + Math.floor(progress * basePrize).toLocaleString();
                 if (progress < 1) requestAnimationFrame(animate);
                 else {
+                    setTimeout(() => {
+                    // [綠色] 福袋炸開效果
+                    bag.style.display = 'none';
+                    content.style.display = 'block';
+                    AudioManager.play('popSound'); // 砰一聲炸開
+                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
                     setTimeout(() => {
                         const bDiv = document.getElementById('bonusDisplay');
                         document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
@@ -343,6 +356,10 @@
                             AudioManager.speak(`恭喜媽媽！總額${this.state.finalMaxAmount}元！發財了！`);
                             Visuals.launchEpicConfetti();
                         }, 800);
+                        setTimeout(() => {
+                        document.getElementById('praiseSection').style.display = 'block';
+                        document.getElementById('praiseSection').scrollIntoView({ behavior: 'smooth' });
+                        }, 2000); // 讓開獎的喜悅飛一會兒，再秀功勞
                     }, 500);
                 }
             };
