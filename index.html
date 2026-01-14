@@ -3,55 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 馬年大吉 - 熊剛的紅包抽獎</title>
+    <title>2026 寶馬狂奔 - 熊剛的紅包抽獎</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --primary-red: #e63946; --gold: #ffb703; --pink: #ff69b4; --dark-red: #9b2226; --shiny-gold: #fff3b0; --bg-gradient: linear-gradient(135deg, #8b0000 0%, #e63946 50%, #d00000 100%); }
-        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-gradient); height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-gradient); height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; cursor: pointer; }
+        
+        /* 紅包雨 */
         .red-packet { position: absolute; width: 30px; height: 45px; background: #ff4d4d; border: 2px solid #ffcc00; border-radius: 4px; top: -50px; z-index: 1; opacity: 0.7; pointer-events: none; animation: fall linear infinite; }
         .red-packet::after { content: "🧧"; display: flex; justify-content: center; align-items: center; font-size: 15px; height: 100%; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* 主容器 */
         .container { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 2rem; border-radius: 30px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); width: 90%; max-width: 420px; text-align: center; border: 5px solid var(--gold); position: relative; z-index: 10; }
+        
+        /* 步驟切換動畫 */
         .step { display: none; animation: fadeIn 0.6s cubic-bezier(0.39, 0.575, 0.565, 1); }
         .step.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
         h2 { color: var(--dark-red); margin-bottom: 1rem; font-size: 1.8rem; font-weight: 900; }
         p { color: #444; line-height: 1.6; }
+        
         input, select { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; font-size: 1rem; outline: none; box-sizing: border-box; }
-        button { background: linear-gradient(to bottom, var(--primary-red), var(--dark-red)); color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: 0.3s; width: 100%; margin-top: 10px; }
+        input:focus, select:focus { border-color: var(--gold); }
+
+        button { background: linear-gradient(to bottom, var(--primary-red), var(--dark-red)); color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: 0.3s; width: 100%; margin-top: 10px; position: relative; overflow: hidden; }
+        button:active { transform: scale(0.95); }
+
+        /* 老虎機樣式 */
         .slot-machine { background: linear-gradient(145deg, #fff0f5, #fff9f0); border-radius: 20px; padding: 20px 10px; margin: 15px 0; border: 3px double var(--gold); }
-        .slot-reel { width: 45px; height: 65px; background: white; border: 2px solid var(--gold); border-radius: 8px; font-size: 2.5rem; font-weight: 900; color: var(--primary-red); display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0px var(--shiny-gold); overflow: hidden; }
-        .spinning { filter: blur(2px); transform: scale(0.95); transition: 0.1s; }
+        .slot-reel { width: 45px; height: 65px; background: white; border: 2px solid var(--gold); border-radius: 8px; font-size: 2.5rem; font-weight: 900; color: var(--primary-red); display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0px var(--shiny-gold); overflow: hidden; transition: all 0.1s; }
+        
+        /* 模糊特效：轉動時加上這個 class */
+        .spinning { filter: blur(3px); transform: scale(0.9); background: #f0f0f0; color: transparent; text-shadow: 0 0 5px rgba(230, 57, 70, 0.5); }
+
         .history-pills { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;}
-        .pill { background: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--dark-red); border: 1px solid var(--gold); font-weight: bold; }
-        .final-amount { font-size: 4rem; color: var(--primary-red); font-weight: 900; text-shadow: 4px 4px 0px var(--gold); display: inline-block; margin: 10px 0; }
+        .pill { background: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--dark-red); border: 1px solid var(--gold); font-weight: bold; animation: popIn 0.3s ease; }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        /* 最終金額特效 */
+        .final-amount { font-size: 3.5rem; color: var(--primary-red); font-weight: 900; text-shadow: 4px 4px 0px var(--gold); background: linear-gradient(90deg, #ffb703, #fff, #ffb703); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShine 3s linear infinite; display: inline-block; margin: 10px 0; }
+        @keyframes goldShine { 0% { background-position: -200%; } 100% { background-position: 200%; } }
+
         .lucky-bag { font-size: 80px; display: none; margin: 20px auto; animation: shake 0.5s infinite; }
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(0deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
-        #praiseSection { display: none; margin-top: 20px; padding: 15px; background: #fffceb; border-radius: 15px; border: 2px dashed #ffb703; }
-        .line-btn { background: linear-gradient(135deg, #00B900 0%, #009900 100%); animation: pulse-line 2s infinite; }
-        @keyframes pulse-line { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* 誇獎與按鈕區 */
+        #praiseSection { display: none; margin-top: 20px; padding: 15px; background: #fffceb; border-radius: 15px; border: 2px dashed #ffb703; animation: slideUp 0.8s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .line-btn { background: linear-gradient(135deg, #06c755 0%, #009900 100%); animation: pulse-line 2s infinite; box-shadow: 0 5px 15px rgba(6, 199, 85, 0.4); }
+        @keyframes pulse-line { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        
+        /* 避開 4 的提示框 */
+        .bonus-note { background: #ffeaea; color: #d63031; font-weight: bold; padding: 8px; border-radius: 8px; border: 1px solid #ff7675; display: none; font-size: 0.9rem; margin: 10px 0; animation: blink 2s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
-<body onclick="AudioManager.init()">
+<body>
 
 <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 <audio id="spinSound" src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3"></audio>
 <audio id="stopSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
-<audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"></audio>
-<audio id="finalCheer" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
 <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3"></audio>
 
 <div class="container">
     <div id="step1" class="step active">
-        <h2>🐎 2026 靈馬獻瑞</h2>
+        <h2>🐍 2026 靈蛇獻瑞</h2>
         <p>紅包領取系統身分識別：</p>
         <input type="text" id="nameInput" placeholder="請輸入誰是世界上最帥的兒子？">
         <button onclick="App.checkStep1()">開啟福氣門</button>
     </div>
 
     <div id="step2" class="step">
-        <h2>🐎 龍馬精神</h2>
+        <h2>🐍 蛇序呈祥</h2>
         <p>回顧 2025 年對愛子「熊剛」評分：</p>
         <select id="satisfaction">
             <option value="">-- 請給予愛的評分 --</option>
@@ -65,23 +92,23 @@
     <div id="step3" class="step">
         <h2>💖 熊剛的悄悄話</h2>
         <div style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary-red);">
-            <p style="margin: 0; font-size: 0.9rem;">
-                親愛的媽媽，台北生活壓力大，上班忙到沒空看股市盤面📈。<br><br>
-                今年的紅包不只是金額，更代表我滿滿的感謝。<b>不論抽到多少，這份孝心都是不打折的！</b>
+            <p style="margin: 0; font-size: 0.95rem;">
+                親愛的媽媽，台北生活步調快，常常忙到沒時間好好陪您。<br><br>
+                2026 蛇年到了，這份紅包不只是金額，更代表我滿滿的感謝與愛。<b>不論抽到多少，兒子的孝心都是不打折的！</b>
             </p>
         </div>
-        <button onclick="App.nextStep(3, '3_5')">辛苦了，乖兒子</button>
+        <button onclick="App.nextStep(3, '3_5')">辛苦了，乖兒子 ❤️</button>
     </div>
 
     <div id="step3_5" class="step">
         <h2>🧧 財氣匯聚中</h2>
-        <p>媽媽，妳準備好要開始抽取<br><b style="color:#e63946; font-size: 1.4rem;">新年特大紅包</b>了嗎？</p>
+        <p>媽媽，準備好迎接<br><b style="color:#e63946; font-size: 1.5rem;">蛇年特大紅包</b>了嗎？</p>
         <button onclick="App.nextStep('3_5', 4)">我準備好了！大獎來！</button>
     </div>
 
     <div id="step4" class="step">
         <h2>🎰 財神來敲門</h2>
-        <p>系統連抽三次取最高值並隨機加碼！</p>
+        <p>系統連抽三次取最高值並加碼！</p>
         <div class="slot-machine">
             <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 15px;">
                 <div class="slot-reel" id="reel0">$</div>
@@ -101,41 +128,51 @@
         
         <div id="resultContent" style="display:none;">
             <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
-            <p style="margin-top: 10px;">您的 2026 馬年紅包總額：</p>
+            <p style="margin-top:5px;">您的 2026 蛇年紅包總額：</p>
             
-            <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.3rem; font-weight: bold;">
+            <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">
                 兒子驚喜加碼：+$<span id="bonusValue">0</span>
             </div>
             
             <div class="final-amount" id="finalPrize">$0</div>
             
-            <div id="bonusContainer">
-                <p id="bonusNote" style="color: #d63031; font-weight: bold; display: none;">
-                    ✨ 已偵測到數字 4，自動升級為 8 (發財)！ ✨
-                </p>
+            <div id="bonusNote" class="bonus-note">
+                ✨ 系統偵測到數字「4」<br>已自動為您升級為「8」發財！ ✨
             </div>
 
             <div id="praiseSection">
                 <p style="font-weight: bold; color: #d4a017;">✨ 偷偷告訴妳 ✨</p>
-                <p style="font-size: 0.9rem;">整個程式、紅包雨架構都是妳兒子<b>親手寫的</b>，是不是非常厲害！</p>
-                <button class="line-btn" onclick="LineBridge.send(App.state.finalMaxAmount)">真的非常厲害！領紅包去 ❤️</button>
+                <p style="font-size: 0.9rem;">整個程式介面、紅包雨特效、防 4 邏輯，都是妳兒子<b>親手寫的</b>，是不是很厲害！</p>
+                <button class="line-btn" onclick="LineBridge.send()">真的非常厲害！傳給兒子領獎 ❤️</button>
             </div>
-            <p style="color: #666; font-size: 0.75rem; margin-top: 15px;">[ 請截圖此畫面傳給熊剛領獎 ]</p>
+            <p style="color: #666; font-size: 0.75rem; margin-top: 15px;">[ 請截圖此畫面傳給熊剛 ]</p>
         </div>
     </div>
 </div>
 
 <script>
+    // === 1. 設定與工具 ===
     const Config = {
-        minBase: 10800, maxBase: 36800,
+        minBase: 12800, maxBase: 36800, // 稍微調高底薪讓媽媽開心
         pinkGoldColors: ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'],
-        loadingTexts: ["手氣加持中...", "財神點錢中...", "運勢上升中..."]
+        loadingTexts: ["手氣加持中...", "財神點錢中...", "蛇年運勢上升..."]
     };
 
     const AudioManager = {
-        play(id) { const el = document.getElementById(id); if (el) { el.currentTime = 0; el.play(); } },
-        init() { ['clickSound', 'spinSound', 'stopSound', 'cheerSound', 'finalCheer', 'popSound'].forEach(id => { const a = document.getElementById(id); if(a){a.play(); a.pause();} }); document.body.onclick = null; },
-        speak(text) { const msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; window.speechSynthesis.speak(msg); }
+        play(id) { const el = document.getElementById(id); if (el) { el.currentTime = 0; el.play().catch(e=>{}); } },
+        init() { 
+            ['clickSound', 'spinSound', 'stopSound', 'popSound'].forEach(id => { 
+                const a = document.getElementById(id); if(a){ a.muted = true; a.play().then(()=>{ a.muted=false; a.pause(); }).catch(e=>{}); } 
+            }); 
+        },
+        speak(text) { 
+            if('speechSynthesis' in window) {
+                const msg = new SpeechSynthesisUtterance(text); 
+                msg.lang = 'zh-TW'; 
+                msg.rate = 0.9; 
+                window.speechSynthesis.speak(msg); 
+            }
+        }
     };
 
     const Visuals = {
@@ -146,88 +183,183 @@
             document.body.appendChild(rp); setTimeout(() => rp.remove(), 5000);
         },
         launchEpicConfetti() {
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: Config.pinkGoldColors });
+            const duration = 3000; const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: Config.pinkGoldColors });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: Config.pinkGoldColors });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        },
+        clickBurst(x, y) {
+            confetti({ particleCount: 30, spread: 60, origin: { x: x/window.innerWidth, y: y/window.innerHeight }, colors: Config.pinkGoldColors, disableForReducedMotion: true, gravity: 0.5, ticks: 100 });
         }
     };
 
+    // 全局點擊特效
+    document.addEventListener('click', (e) => {
+        AudioManager.play('clickSound');
+        // 避免按鈕上觸發太頻繁，稍微錯開
+        if(e.target.tagName !== 'BUTTON') Visuals.clickBurst(e.clientX, e.clientY);
+    }, {passive: true});
+
     const LineBridge = {
-        send(amount) {
-            const msg = `兒子！紅包最後金額是：$${amount.toLocaleString()}\n你親手寫的程式真的太厲害了！快發給我！❤️`;
+        send() {
+            const amount = App.state.finalMaxAmount;
+            const msg = `兒子！紅包抽到了 $${amount.toLocaleString()}！\n那個老虎機跟自動把4變8的功能太貼心了！\n你寫程式真的太厲害了，媽媽以你為榮！❤️`;
             window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
         }
     };
 
+    // === 2. 核心邏輯 ===
     const App = {
-        state: { scores: [], count: 3, finalMaxAmount: 0 },
+        state: { scores: [], count: 3, finalMaxAmount: 0, wasModified: false },
+        
         nextStep(current, next) {
-            AudioManager.play('clickSound');
             document.getElementById('step' + current).classList.remove('active');
             document.getElementById('step' + next).classList.add('active');
         },
-        checkStep1() { if (document.getElementById('nameInput').value.includes("熊剛")) this.nextStep(1, 2); else alert("輸入熊剛試試看！"); },
-        checkStep2() { if (document.getElementById('satisfaction').value !== "") this.nextStep(2, 3); },
-        avoidFour(num) { 
-            let str = num.toString(); 
-            return str.includes('4') ? parseInt(str.replace(/4/g, '8')) : num; 
+
+        checkStep1() { 
+            if (document.getElementById('nameInput').value.includes("熊剛")) this.nextStep(1, 2); 
+            else alert("哎呀！輸入「熊剛」試試看，他是最帥的！"); 
+        },
+        checkStep2() { 
+            if (document.getElementById('satisfaction').value !== "") this.nextStep(2, 3); 
         },
 
+        // 避開 4 的邏輯，並標記是否有修改
+        avoidFour(num) { 
+            let str = num.toString(); 
+            if (str.includes('4')) {
+                this.state.wasModified = true;
+                return parseInt(str.replace(/4/g, '8')); 
+            }
+            return num; 
+        },
+
+        // 老虎機抽獎
         draw() {
-            const btn = document.getElementById('drawBtn'); btn.disabled = true;
+            const btn = document.getElementById('drawBtn'); 
+            btn.disabled = true;
             AudioManager.play('spinSound');
-            const finalAmount = this.avoidFour(Math.floor(Math.random() * (Config.maxBase - Config.minBase + 1) + Config.minBase));
+            
+            // 這次抽獎的金額 (先不存入 state，顯示完再存)
+            let rawAmount = Math.floor(Math.random() * (Config.maxBase - Config.minBase + 1) + Config.minBase);
+            let displayAmount = this.avoidFour(rawAmount);
+
             const reels = [1,2,3,4,5].map(i => document.getElementById('reel' + i));
             
+            // 1. 讓所有輪子開始「旋轉」(模糊特效)
+            reels.forEach(r => r.classList.add('spinning'));
+
+            // 2. 按鈕文字跳動
             let textIdx = 0;
             const textInt = setInterval(() => { btn.innerText = Config.loadingTexts[textIdx++ % 3]; }, 400);
 
+            // 3. 依序停下輪子
             reels.forEach((reel, i) => {
                 setTimeout(() => {
-                    reel.innerText = finalAmount.toString().padStart(5, '0')[i];
+                    reel.classList.remove('spinning'); // 移除模糊
+                    reel.innerText = displayAmount.toString().padStart(5, '0')[i];
                     AudioManager.play('stopSound');
+                    
+                    // 最後一個輪子停下
                     if (i === 4) {
                         clearInterval(textInt);
-                        this.state.scores.push(finalAmount);
+                        this.state.scores.push(displayAmount);
                         this.state.count--;
+                        
+                        // 更新歷史紀錄小藥丸
                         document.getElementById('historyPills').innerHTML = this.state.scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
-                        if (this.state.count > 0) { btn.disabled = false; btn.innerText = `再抽一次 (剩 ${this.state.count} 次)`; }
-                        else { btn.disabled = false; btn.innerText = "查看最終加碼成果"; btn.onclick = () => this.showFinal(); }
+                        
+                        if (this.state.count > 0) { 
+                            btn.disabled = false; 
+                            btn.innerText = `再抽一次 (剩 ${this.state.count} 次)`; 
+                        } else { 
+                            btn.disabled = false; 
+                            btn.innerText = "查看最終加碼成果"; 
+                            btn.classList.add('line-btn'); // 讓按鈕變亮
+                            btn.onclick = () => this.showFinal(); 
+                        }
                     }
-                }, 1000 + (i * 300));
+                }, 800 + (i * 400)); // 每個輪子延遲停止
             });
         },
 
+        // 顯示最終結果
         showFinal() {
             this.nextStep(4, 5);
             const bag = document.getElementById('luckyBag');
             const content = document.getElementById('resultContent');
+            
+            // 顯示福袋搖動
             bag.style.display = 'block';
             AudioManager.play('spinSound');
 
             setTimeout(() => {
                 bag.style.display = 'none';
-                content.style.display = 'block';
+                content.style.display = 'block'; // 顯示結果區
                 AudioManager.play('popSound');
                 
+                // 計算金額
                 let basePrize = Math.max(...this.state.scores);
                 const extraGift = Math.floor(Math.random() * 2001) + 3000;
-                this.state.finalMaxAmount = this.avoidFour(basePrize + extraGift);
+                let total = basePrize + extraGift;
                 
-                document.getElementById('finalPrize').innerText = "$" + this.state.finalMaxAmount.toLocaleString();
+                // 再次檢查最終總額是否有 4
+                this.state.wasModified = false; // 重置標記，只看總額
+                this.state.finalMaxAmount = this.avoidFour(total);
+                
+                // 設置 UI 數值
                 document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
                 document.getElementById('bonusDisplay').style.display = 'block';
+
+                // 如果有觸發 4->8 機制，顯示提示框
+                if (this.state.wasModified) {
+                    document.getElementById('bonusNote').style.display = 'block';
+                }
+
+                // *** 關鍵特效：數字滾動 ***
+                this.animateValue(document.getElementById('finalPrize'), 0, this.state.finalMaxAmount, 2000);
                 
                 Visuals.launchEpicConfetti();
-                AudioManager.speak(`恭喜媽媽！總金額${this.state.finalMaxAmount}元！發財了！`);
                 
+                // 語音祝賀
+                setTimeout(() => {
+                    AudioManager.speak(`哇！恭喜媽媽！蛇年行大運，紅包總金額 ${this.state.finalMaxAmount} 元！發財了！`);
+                }, 500);
+                
+                // 延遲顯示誇獎區，讓媽媽先看金額
                 setTimeout(() => {
                     document.getElementById('praiseSection').style.display = 'block';
-                    document.getElementById('praiseSection').scrollIntoView({ behavior: 'smooth' });
-                }, 2000);
-            }, 2500);
+                    document.getElementById('praiseSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 2500);
+
+            }, 2000); // 福袋搖 2 秒
+        },
+
+        // 數字滾動動畫函數
+        animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // 使用 easeOutQuart 讓滾動在最後慢下來
+                const ease = 1 - Math.pow(1 - progress, 4); 
+                const currentVal = Math.floor(ease * (end - start) + start);
+                obj.innerHTML = "$" + currentVal.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
         }
     };
 
+    // 啟動紅包雨
     setInterval(Visuals.createRain, 400);
+    // 第一次互動後初始化音效
+    document.body.addEventListener('click', AudioManager.init, {once:true});
 </script>
 </body>
 </html>
