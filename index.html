@@ -32,7 +32,7 @@
         button { background: linear-gradient(to bottom, var(--primary-red), var(--dark-red)); color: white; border: none; padding: 16px 28px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(155, 34, 38, 0.4); transition: 0.3s; width: 100%; margin-top: 10px; position: relative; overflow: hidden; }
         button:active { transform: scale(0.95); }
 
-        /* --- 優化後的老虎機樣式 --- */
+        /* 老虎機樣式 */
         .slot-machine { background: linear-gradient(145deg, #fff0f5, #fff9f0); border-radius: 20px; padding: 20px 10px; margin: 15px 0; border: 3px double var(--gold); }
         .slot-reel { 
             width: 45px; height: 65px; 
@@ -46,7 +46,6 @@
             overflow: hidden; transition: all 0.1s; 
         }
         
-        /* 旋轉霓虹特效 */
         .spinning { 
             filter: blur(1.5px); transform: scale(1.05); 
             border-color: var(--pink);
@@ -63,13 +62,12 @@
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
         /* 最終金額特效 */
-        .final-amount { font-size: 3.5rem; color: var(--primary-red); font-weight: 900; text-shadow: 4px 4px 0px var(--gold); background: linear-gradient(90deg, #ffb703, #fff, #ffb703); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShine 3s linear infinite; display: inline-block; margin: 10px 0; }
+        .final-amount { font-size: 3.5rem; color: var(--primary-red); font-weight: 900; text-shadow: 4px 4px 0px var(--gold); background: linear-gradient(90deg, #ffb703, #fff, #ffb703); background-size: 200% auto; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShine 3s linear infinite; display: inline-block; margin: 10px 0; }
         @keyframes goldShine { 0% { background-position: -200%; } 100% { background-position: 200%; } }
 
-        .lucky-bag { font-size: 80px; display: none; margin: 20px auto; animation: shake 0.5s infinite; }
+        .lucky-bag { font-size: 60px; display: none; margin: 20px auto; animation: shake 0.5s infinite; line-height: 1.2; }
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(0deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
 
-        /* 誇獎與按鈕區 */
         #praiseSection { display: none; margin-top: 20px; padding: 15px; background: #fffceb; border-radius: 15px; border: 2px dashed #ffb703; animation: slideUp 0.8s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -165,7 +163,8 @@
 
 <script>
     const Config = {
-        minBase: 12800, maxBase: 36800,
+        minBase: 12800, 
+        maxBase: 34800,
         pinkGoldColors: ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'],
         loadingTexts: ["手氣加持中...", "財神點錢中...", "馬年財運亨通..."]
     };
@@ -221,6 +220,11 @@
 
     const App = {
         state: { scores: [], count: 3, finalMaxAmount: 0, wasModified: false },
+        
+        clamp(val, min, max) {
+            return Math.min(Math.max(val, min), max);
+        },
+
         nextStep(current, next) {
             document.getElementById('step' + current).classList.remove('active');
             document.getElementById('step' + next).classList.add('active');
@@ -232,11 +236,13 @@
         checkStep2() { if (document.getElementById('satisfaction').value !== "") this.nextStep(2, 3); },
         avoidFour(num) { 
             let str = num.toString(); 
-            if (str.includes('4')) { this.state.wasModified = true; return parseInt(str.replace(/4/g, '8')); }
+            if (str.includes('4')) { 
+                this.state.wasModified = true; 
+                return parseInt(str.replace(/4/g, '8')); 
+            }
             return num; 
         },
 
-        // --- 華麗升級版抽獎函數 ---
         draw() {
             const btn = document.getElementById('drawBtn'); 
             btn.disabled = true;
@@ -248,7 +254,6 @@
 
             const reels = [1,2,3,4,5].map(i => document.getElementById('reel' + i));
             
-            // 1. 啟動數字瘋狂隨機跳動
             const timers = reels.map((reel, idx) => {
                 reel.classList.add('spinning');
                 return setInterval(() => {
@@ -256,19 +261,16 @@
                 }, 50 + (idx * 20)); 
             });
 
-            // 2. 按鈕文字載入中動畫
             let textIdx = 0;
             const textInt = setInterval(() => { btn.innerText = Config.loadingTexts[textIdx++ % 3]; }, 400);
 
-            // 3. 依序定格數字
             reels.forEach((reel, i) => {
                 setTimeout(() => {
-                    clearInterval(timers[i]); // 停止該欄跳動
+                    clearInterval(timers[i]);
                     reel.classList.remove('spinning');
                     reel.innerText = finalDigits[i];
                     AudioManager.play('stopSound');
                     
-                    // 定格震動彈回特效
                     reel.style.transform = 'scale(1.2)';
                     setTimeout(() => reel.style.transform = 'scale(1)', 100);
 
@@ -294,19 +296,42 @@
             const bag = document.getElementById('luckyBag');
             const content = document.getElementById('resultContent');
             bag.style.display = 'block';
+            bag.innerText = "💰"; // 確保錢袋重設
             AudioManager.play('spinSound');
 
             setTimeout(() => {
+                let basePrize = Math.max(...this.state.scores);
+                const extraGift = Math.floor(Math.random() * 2001) + 3000;
+                let total = basePrize + extraGift;
+                this.state.wasModified = false;
+                let processedTotal = this.avoidFour(total);
+                
+                // --- 自動重抽邏輯 ---
+                if (processedTotal < 32888) {
+                    AudioManager.speak("哎呀！財氣還不夠，重新匯聚好運！");
+                    bag.style.fontSize = "20px";
+                    bag.innerText = "金額太低了，兒子加碼重抽中...🔄";
+                    
+                    setTimeout(() => {
+                        this.state.scores = [];
+                        this.state.count = 3;
+                        document.getElementById('historyPills').innerHTML = '';
+                        document.getElementById('drawBtn').disabled = false;
+                        document.getElementById('drawBtn').innerText = "點我抽紅包 (剩 3 次)";
+                        document.getElementById('drawBtn').onclick = () => this.draw();
+                        document.getElementById('drawBtn').classList.remove('line-btn');
+                        bag.style.fontSize = "60px";
+                        this.nextStep(5, '3_5');
+                    }, 2000);
+                    return;
+                }
+
+                // --- 成功顯示 ---
                 bag.style.display = 'none';
                 content.style.display = 'block';
                 AudioManager.play('popSound');
                 
-                let basePrize = Math.max(...this.state.scores);
-                const extraGift = Math.floor(Math.random() * 2001) + 3000;
-                let total = basePrize + extraGift;
-                
-                this.state.wasModified = false;
-                this.state.finalMaxAmount = this.avoidFour(total);
+                this.state.finalMaxAmount = this.clamp(processedTotal, 32888, 39888);
                 
                 document.getElementById('bonusValue').innerText = extraGift.toLocaleString();
                 document.getElementById('bonusDisplay').style.display = 'block';
@@ -316,7 +341,7 @@
                 Visuals.launchEpicConfetti();
                 
                 setTimeout(() => {
-                    AudioManager.speak(`哇！恭喜媽媽！馬到成功，一馬當先，馬不停蹄！紅包總金額 ${this.state.finalMaxAmount} 元！發財了！`);
+                    AudioManager.speak(`哇！恭喜媽媽！紅包總金額 ${this.state.finalMaxAmount} 元！發大財囉！`);
                 }, 500);
                 
                 setTimeout(() => {
@@ -325,7 +350,7 @@
                 }, 2500);
             }, 2000);
         },
-
+    
         animateValue(obj, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -339,7 +364,6 @@
             window.requestAnimationFrame(step);
         }
     };
-
     setInterval(Visuals.createRain, 400);
     document.body.addEventListener('click', AudioManager.init, {once:true});
 </script>
