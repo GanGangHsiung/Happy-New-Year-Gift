@@ -201,7 +201,7 @@
 <script>
     const Config = {
         minBase: 22800, 
-        maxBase: 34800,
+        maxBase: 33888,
         pinkGoldColors: ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'],
         loadingTexts: ["手氣加持中...", "財神點錢中...", "馬年財運亨通..."]
     };
@@ -398,7 +398,7 @@
 
             setTimeout(() => {
                 let basePrize = Math.max(...this.state.scores);
-                const extraGift = Math.floor(Math.random() * 2001) + 3000;
+                const extraGift = Math.floor(Math.random() * 2001) + 4000;
                 let total = basePrize + extraGift;
                 this.state.wasModified = false;
                 let processedTotal = this.avoidFour(total);
