@@ -109,7 +109,7 @@
         <h2>💖 熊剛的悄悄話</h2>
         <div style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary-red);">
             <p style="margin: 0; font-size: 0.95rem;">
-                親愛的媽媽，台北生活步調快，常常忙到沒時間好好陪您，上班後也比較沒時間看股票。<br><br>
+                親愛的爸爸媽媽，台北生活步調快，常常忙到沒時間好好陪您們，上班後也比較沒時間看股票。<br><br>
                 2026 馬年到了，這份紅包不只是金額，更代表我滿滿的感謝與愛。<b>不論抽到多少，兒子的孝心都是不打折的！</b>
             </p>
         </div>
@@ -118,7 +118,7 @@
 
     <div id="step3_5" class="step">
         <h2>🧧 財氣匯聚中</h2>
-        <p>媽媽，準備好迎接<br><b style="color:#e63946; font-size: 1.5rem;">馬年騰飛特大紅包</b>了嗎？</p>
+        <p>爸爸媽媽，準備好迎接<br><b style="color:#e63946; font-size: 1.5rem;">馬年騰飛特大紅包</b>了嗎？</p>
         <button onclick="App.nextStep('3_5', 4)">我準備好了！大獎來！</button>
     </div>
 
@@ -142,7 +142,7 @@
     <div id="step5" class="step">
         <div id="luckyBag" class="lucky-bag">💰</div>
         <div id="resultContent" style="display:none;">
-            <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜媽媽 🧧</div>
+            <div style="font-size: 2rem; color: var(--dark-red); font-weight: 900;">🧧 恭喜爹娘 🧧</div>
             <p style="margin-top:5px;">您的 2026 馬年發財紅包總額：</p>
             <div id="bonusDisplay" style="display:none; color: var(--pink); font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">
                 兒子驚喜加碼：+$<span id="bonusValue">0</span>
@@ -153,7 +153,7 @@
             </div>
             <div id="praiseSection">
                 <p style="font-weight: bold; color: #d4a017;">✨ 偷偷告訴妳 ✨</p>
-                <p style="font-size: 0.9rem;">整個程式介面、紅包雨特效、抽獎邏輯、老虎機畫面，都是妳兒子<b>親手寫的</b>，是不是很厲害！</p>
+                <p style="font-size: 0.9rem;">整個程式介面、紅包雨特效、抽獎邏輯、老虎機畫面，都是你兒子<b>親手寫的</b>，是不是很厲害！</p>
                 <button class="line-btn" onclick="LineBridge.send()">真的非常厲害！傳給兒子領獎 ❤️</button>
             </div>
             <p style="color: #666; font-size: 0.75rem; margin-top: 15px;">[ 請截圖此畫面傳給熊剛 ]</p>
@@ -223,7 +223,7 @@
     const LineBridge = {
         send() {
             const amount = App.state.finalMaxAmount;
-            const msg = `兒子，馬到成功!紅包抽到了 $${amount.toLocaleString()}！\n那個老虎機跟抽獎的功能太貼心了！\n你寫程式真的太厲害了，媽媽以你為榮！❤️`;
+            const msg = `兒子，馬到成功!紅包抽到了 $${amount.toLocaleString()}！\n那個老虎機跟抽獎的功能太貼心了！\n你寫程式真的太厲害了，爸爸媽媽以你為榮！❤️`;
             window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
         }
     };
@@ -357,7 +357,7 @@
                 Visuals.launchEpicConfetti();
                 
                 setTimeout(() => {
-                    AudioManager.speak(`哇！恭喜媽媽！紅包總金額 ${this.state.finalMaxAmount} 元！發大財囉！`);
+                    AudioManager.speak(`哇！恭喜爹爹娘娘！紅包總金額 ${this.state.finalMaxAmount} 元！發大財囉！`);
                 }, 500);
                 
                 setTimeout(() => {
