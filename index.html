@@ -10,6 +10,37 @@
         :root { --primary-red: #e63946; --gold: #ffb703; --pink: #ff69b4; --dark-red: #9b2226; --shiny-gold: #fff3b0; --bg-gradient: linear-gradient(135deg, #8b0000 0%, #e63946 50%, #d00000 100%); }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-gradient); height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; cursor: pointer; }
         
+        /* === 新增：開場動畫樣式 === */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #9b2226 0%, #000000 100%);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+        .splash-content { text-align: center; padding: 20px; }
+        .splash-text {
+            color: var(--gold);
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.6;
+            text-shadow: 0 0 20px rgba(255, 183, 3, 0.6);
+        }
+        .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px) scale(0.5);
+            animation: charAppear 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(180deg, #fff3b0 0%, #ffb703 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @keyframes charAppear { to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* ======================== */
+
         /* 紅包雨 */
         .red-packet { position: absolute; width: 30px; height: 45px; background: #ff4d4d; border: 2px solid #ffcc00; border-radius: 4px; top: -50px; z-index: 1; opacity: 0.7; pointer-events: none; animation: fall linear infinite; }
         .red-packet::after { content: "🧧"; display: flex; justify-content: center; align-items: center; font-size: 15px; height: 100%; }
@@ -79,6 +110,12 @@
     </style>
 </head>
 <body>
+
+<div id="splash-screen">
+    <div class="splash-content">
+        <div class="splash-text" id="splash-title"></div>
+    </div>
+</div>
 
 <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 <audio id="spinSound" src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3"></audio>
@@ -163,7 +200,7 @@
 
 <script>
     const Config = {
-        minBase: 12800, 
+        minBase: 22800, 
         maxBase: 34800,
         pinkGoldColors: ['#ff69b4', '#ffd700', '#ffffff', '#ff1493', '#ffcc00'],
         loadingTexts: ["手氣加持中...", "財神點錢中...", "馬年財運亨通..."]
@@ -172,23 +209,20 @@
     const AudioManager = {
         play(id) { const el = document.getElementById(id); if (el) { el.currentTime = 0; el.play().catch(e=>{}); } },
         init() { 
-            // 音效預熱
             ['clickSound', 'spinSound', 'stopSound', 'popSound'].forEach(id => { 
                 const a = document.getElementById(id); if(a){ a.muted = true; a.play().then(()=>{ a.muted=false; a.pause(); }).catch(e=>{}); } 
             }); 
-            // --- 新增：語音系統預熱 ---
             if('speechSynthesis' in window) {
-                const initialMsg = new SpeechSynthesisUtterance(''); // 空白文字
+                const initialMsg = new SpeechSynthesisUtterance('');
                 window.speechSynthesis.speak(initialMsg);
             }
         },
         speak(text) { 
             if('speechSynthesis' in window) {
-                // 先取消目前所有排隊的語音，確保即時性
                 window.speechSynthesis.cancel(); 
                 const msg = new SpeechSynthesisUtterance(text); 
                 msg.lang = 'zh-TW'; 
-                msg.rate = 1.0; // 手機上建議設為 1.0 或略快
+                msg.rate = 1.0; 
                 msg.volume = 1.0;
                 window.speechSynthesis.speak(msg); 
             }
@@ -212,8 +246,55 @@
         },
         clickBurst(x, y) {
             confetti({ particleCount: 30, spread: 60, origin: { x: x/window.innerWidth, y: y/window.innerHeight }, colors: Config.pinkGoldColors, gravity: 0.5, ticks: 100 });
+        },
+        // === 新增：金元寶萬馬奔騰轉場 ===
+        launchGoldTransition() {
+            const end = Date.now() + 1500;
+            (function frame() {
+                confetti({
+                    particleCount: 10,
+                    angle: Math.random() * 360,
+                    spread: 70,
+                    origin: { x: Math.random(), y: Math.random() - 0.2 },
+                    colors: ['#ffb703', '#fff3b0', '#ffd700'],
+                    ticks: 200,
+                    gravity: 1.2,
+                    shapes: ['circle'], // 模擬金幣/元寶
+                    scalar: 2 // 讓粒子大一點
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
         }
     };
+
+    // === 新增：開場動畫執行邏輯 ===
+    window.addEventListener('DOMContentLoaded', () => {
+        const titleText = "2026 寶馬狂奔\n歡迎來到熊剛的\n新年紅包抽獎系統";
+        const container = document.getElementById('splash-title');
+        
+        titleText.split("").forEach((char, i) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            if (char === "\n") {
+                container.appendChild(document.createElement('br'));
+            } else {
+                span.innerText = char;
+                span.style.animationDelay = `${i * 0.12}s`;
+                container.appendChild(span);
+            }
+        });
+
+        setTimeout(() => {
+            // 轉場開始
+            Visuals.launchGoldTransition();
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.visibility = 'hidden';
+                AudioManager.speak("歡迎爸爸媽媽！祝您二位馬到成功，點擊快馬加鞭開啟好運吧！");
+            }, 1000);
+        }, titleText.length * 120 + 2000);
+    });
 
     document.addEventListener('click', (e) => {
         AudioManager.play('clickSound');
@@ -298,7 +379,7 @@
                             btn.innerText = "查看最終加碼成果"; 
                             btn.classList.add('line-btn'); 
                             btn.onclick = () => {
-                            AudioManager.init(); // 點擊時再次激活語音權限
+                            AudioManager.init(); 
                             this.showFinal();
                             }; 
                         }
@@ -312,7 +393,7 @@
             const bag = document.getElementById('luckyBag');
             const content = document.getElementById('resultContent');
             bag.style.display = 'block';
-            bag.innerText = "💰"; // 確保錢袋重設
+            bag.innerText = "💰"; 
             AudioManager.play('spinSound');
 
             setTimeout(() => {
@@ -322,7 +403,6 @@
                 this.state.wasModified = false;
                 let processedTotal = this.avoidFour(total);
                 
-                // --- 自動重抽邏輯 ---
                 if (processedTotal < 32888) {
                     AudioManager.speak("哎呀！財氣還不夠，重新匯聚好運！");
                     bag.style.fontSize = "20px";
@@ -342,7 +422,6 @@
                     return;
                 }
 
-                // --- 成功顯示 ---
                 bag.style.display = 'none';
                 content.style.display = 'block';
                 AudioManager.play('popSound');
