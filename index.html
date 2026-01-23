@@ -172,14 +172,24 @@
     const AudioManager = {
         play(id) { const el = document.getElementById(id); if (el) { el.currentTime = 0; el.play().catch(e=>{}); } },
         init() { 
+            // 音效預熱
             ['clickSound', 'spinSound', 'stopSound', 'popSound'].forEach(id => { 
                 const a = document.getElementById(id); if(a){ a.muted = true; a.play().then(()=>{ a.muted=false; a.pause(); }).catch(e=>{}); } 
             }); 
+            // --- 新增：語音系統預熱 ---
+            if('speechSynthesis' in window) {
+                const initialMsg = new SpeechSynthesisUtterance(''); // 空白文字
+                window.speechSynthesis.speak(initialMsg);
+            }
         },
         speak(text) { 
             if('speechSynthesis' in window) {
+                // 先取消目前所有排隊的語音，確保即時性
+                window.speechSynthesis.cancel(); 
                 const msg = new SpeechSynthesisUtterance(text); 
-                msg.lang = 'zh-TW'; msg.rate = 0.9; 
+                msg.lang = 'zh-TW'; 
+                msg.rate = 1.0; // 手機上建議設為 1.0 或略快
+                msg.volume = 1.0;
                 window.speechSynthesis.speak(msg); 
             }
         }
@@ -281,10 +291,16 @@
                         document.getElementById('historyPills').innerHTML = this.state.scores.map(s => `<span class="pill">$${s.toLocaleString()}</span>`).join('');
                         
                         if (this.state.count > 0) { 
-                            btn.disabled = false; btn.innerText = `再抽一次 (剩 ${this.state.count} 次)`; 
-                        } else { 
-                            btn.disabled = false; btn.innerText = "查看最終加碼成果"; 
-                            btn.classList.add('line-btn'); btn.onclick = () => this.showFinal(); 
+                            btn.disabled = false; 
+                            btn.innerText = `再抽一次 (剩 ${this.state.count} 次)`; 
+                            } else { 
+                            btn.disabled = false; 
+                            btn.innerText = "查看最終加碼成果"; 
+                            btn.classList.add('line-btn'); 
+                            btn.onclick = () => {
+                            AudioManager.init(); // 點擊時再次激活語音權限
+                            this.showFinal();
+                            }; 
                         }
                     }
                 }, 1200 + (i * 500)); 
